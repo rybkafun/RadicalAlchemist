@@ -16,7 +16,8 @@ class RadicalAlchemistGame {
             D: { currentStep: 0, completed: false },
             E: { currentStep: 0, completed: false },
             F: { currentStep: 0, completed: false },
-            G: { currentStep: 0, completed: false }
+            G: { currentStep: 0, completed: false },
+            H: { currentStep: 0, completed: false }
         };
 
         // Module A Data (Intuition: Square area to side)
@@ -167,7 +168,8 @@ class RadicalAlchemistGame {
         this.secretState = {
             E: { mission: 0, step: 0, wrong: 0, locked: false, board: [] },
             F: { mission: 0, step: 0, wrong: 0, locked: false, board: [] },
-            G: { mission: 0, step: 0, wrong: 0, locked: false, board: [] }
+            G: { mission: 0, step: 0, wrong: 0, locked: false, board: [] },
+            H: { mission: 0, step: 0, wrong: 0, locked: false, board: [] }
         };
 
         // State for active interactions
@@ -413,6 +415,9 @@ class RadicalAlchemistGame {
         } else if (this.currentModule === 'G') {
             hudFormula.innerHTML = `<span class="math-radical">∛(a³·b) = a∛b</span> &nbsp;|&nbsp; <span class="math-radical">√(a²·b) = a√b</span>`;
             hudTip.textContent = "Sześciany: 8, 27, 64. Kwadraty: 4, 9, 16, 25. Różnych pierwiastków nie dodajemy.";
+        } else if (this.currentModule === 'H') {
+            hudFormula.innerHTML = `<span class="math-radical">√a = b, gdy b² = a i b ≥ 0</span> &nbsp;|&nbsp; <span class="math-radical">∛a = b, gdy b³ = a</span>`;
+            hudTip.textContent = "√ tylko z liczb nieujemnych (wynik ≥ 0). ∛ można liczyć z KAŻDEJ liczby, także ujemnej!";
         }
     }
 
@@ -427,7 +432,8 @@ class RadicalAlchemistGame {
             { id: 'D', name: 'Moduł D: Abstrakcja i Sześcian', shortName: '🔮 Sześcian', sub: 'Dodawanie i ∛x', icon: '🔮' },
             { id: 'E', name: 'Tajemnica I: Bliźniacze Kwadraty', shortName: '🔲 Bliźniaki', sub: 'Zadanie z zeszytu', icon: '🔲' },
             { id: 'F', name: 'Tajemnica II: Zgodne Kryształy', shortName: '🧪 Kryształy', sub: 'Zadania z zeszytu', icon: '🧪' },
-            { id: 'G', name: 'Tajemnica III: Dwa Światy', shortName: '🌗 Dwa Światy', sub: 'Zadanie z zeszytu', icon: '🌗' }
+            { id: 'G', name: 'Tajemnica III: Dwa Światy', shortName: '🌗 Dwa Światy', sub: 'Zadanie z zeszytu', icon: '🌗' },
+            { id: 'H', name: 'Tajemnica IV: Księga Definicji', shortName: '📜 Definicje', sub: 'Pierwiastki √ i ∛ (s. 25)', icon: '📜' }
         ];
 
         navContainer.innerHTML = '';
@@ -1454,6 +1460,110 @@ class RadicalAlchemistGame {
                                 board: 'Odpowiedź: C. 3√2 ✔'
                             }
                         ]
+                    },
+                    {
+                        tag: 'Trening 1',
+                        problem: 'Kwadrat ABCD ma pole dwa razy większe od pola kwadratu EFGH. Bok ABCD = 4. Jaką długość ma bok kwadratu EFGH?',
+                        diagram: 'twin-squares', diagramSide: 4,
+                        resultLine: 'Bok mniejszego kwadratu: √8 = √4 · √2 = 2√2',
+                        answerLabel: 'Odpowiedź B: 2√2',
+                        steps: [
+                            {
+                                q: 'Ile wynosi pole DUŻEGO kwadratu ABCD?',
+                                say: 'Bok ABCD = 4. Pole = bok · bok.',
+                                choices: ['8', '16', '12'], correct: 1,
+                                hint: 'Pole = 4 · 4. Cztery razy cztery.',
+                                ok: 'Tak! 4 · 4 = 16.',
+                                board: 'Pole ABCD = 4 · 4 = 16'
+                            },
+                            {
+                                q: 'Ile wynosi pole MAŁEGO kwadratu EFGH?',
+                                say: 'Pole ABCD jest 2 razy większe, więc pole EFGH = 16 : 2.',
+                                choices: ['32', '8', '14'], correct: 1,
+                                hint: 'Mały ma połowę pola dużego. Połowa z 16 to...?',
+                                wrong: { 0: '32 to 16 · 2. Mały kwadrat jest MNIEJSZY, więc dzielimy.' },
+                                ok: 'Super! Pole EFGH = 8.',
+                                board: 'Pole EFGH = 16 : 2 = 8'
+                            },
+                            {
+                                q: 'Jak rozbić 8, żeby wyciągnąć kwadrat?',
+                                say: 'Bok = √8. Szukamy kwadratu (4, 9, 16...), który mieści się w 8.',
+                                choices: ['4 · 2', '3 · 3', '6 · 2'], correct: 0,
+                                hint: '4 to kwadrat (2 · 2), a 4 · 2 = 8.',
+                                wrong: { 1: '3 · 3 = 9, a nie 8.', 2: '6 · 2 = 12, a nie 8.' },
+                                ok: 'Dokładnie! 8 = 4 · 2.',
+                                board: 'bok = √8 = √(4 · 2)'
+                            },
+                            {
+                                q: 'Ile to jest √4 · √2 ?',
+                                say: '√8 = √4 · √2 = ? · √2',
+                                choices: ['4√2', '2√2', '2√4'], correct: 1,
+                                hint: '√4 to 2, bo 2 · 2 = 4.',
+                                wrong: { 0: '√4 to 2, nie 4.', 2: 'Pod pierwiastkiem ma zostać 2, a przed nim wynik z √4.' },
+                                ok: 'Pięknie! √8 = 2√2.',
+                                board: '√8 = √4 · √2 = 2√2'
+                            },
+                            {
+                                q: 'Zaznacz odpowiedź: jaką długość ma bok mniejszego kwadratu?',
+                                say: 'Wynik masz na tablicy. Wybierz pasującą literę!',
+                                choices: ['A. 2', 'B. 2√2', 'C. 4', 'D. 8√2'], correct: 1,
+                                hint: 'Na tablicy mamy: bok = 2√2.',
+                                ok: 'Trening 1 rozwiązany: B!',
+                                board: 'Odpowiedź: B. 2√2 ✔'
+                            }
+                        ]
+                    },
+                    {
+                        tag: 'Trening 2',
+                        problem: 'Kwadrat ABCD ma pole dwa razy większe od pola kwadratu EFGH. Bok ABCD = 8. Jaką długość ma bok kwadratu EFGH?',
+                        diagram: 'twin-squares', diagramSide: 8,
+                        resultLine: 'Bok mniejszego kwadratu: √32 = √16 · √2 = 4√2',
+                        answerLabel: 'Odpowiedź B: 4√2',
+                        steps: [
+                            {
+                                q: 'Ile wynosi pole DUŻEGO kwadratu ABCD?',
+                                say: 'Bok ABCD = 8. Pole = bok · bok.',
+                                choices: ['56', '64', '16'], correct: 1,
+                                hint: 'Pole = 8 · 8. Osiem razy osiem.',
+                                ok: 'Tak! 8 · 8 = 64.',
+                                board: 'Pole ABCD = 8 · 8 = 64'
+                            },
+                            {
+                                q: 'Ile wynosi pole MAŁEGO kwadratu EFGH?',
+                                say: 'Pole ABCD jest 2 razy większe, więc pole EFGH = 64 : 2.',
+                                choices: ['128', '32', '56'], correct: 1,
+                                hint: 'Połowa z 64 to...?',
+                                wrong: { 0: '128 to 64 · 2. Mały kwadrat ma MNIEJSZE pole, więc dzielimy.' },
+                                ok: 'Super! Pole EFGH = 32.',
+                                board: 'Pole EFGH = 64 : 2 = 32'
+                            },
+                            {
+                                q: 'Jak rozbić 32, żeby wyciągnąć NAJWIĘKSZY kwadrat?',
+                                say: 'Bok = √32. Kwadraty: 4, 9, 16, 25... Który z nich najwięcej "wyciągnie"?',
+                                choices: ['16 · 2', '8 · 4', '10 · 3'], correct: 0,
+                                hint: '16 = 4 · 4 to kwadrat, a 16 · 2 = 32.',
+                                wrong: { 1: '8 · 4 = 32, ale zostanie √8, które jeszcze da się uprościć. Szukamy 16!', 2: '10 · 3 = 30, a nie 32.' },
+                                ok: 'Dokładnie! 32 = 16 · 2.',
+                                board: 'bok = √32 = √(16 · 2)'
+                            },
+                            {
+                                q: 'Ile to jest √16 · √2 ?',
+                                say: '√32 = √16 · √2 = ? · √2',
+                                choices: ['16√2', '4√2', '2√4'], correct: 1,
+                                hint: '√16 to 4, bo 4 · 4 = 16.',
+                                wrong: { 0: '√16 to 4, nie 16.' },
+                                ok: 'Pięknie! √32 = 4√2.',
+                                board: '√32 = √16 · √2 = 4√2'
+                            },
+                            {
+                                q: 'Zaznacz odpowiedź: jaką długość ma bok mniejszego kwadratu?',
+                                say: 'Wynik masz na tablicy. Wybierz pasującą literę!',
+                                choices: ['A. 4', 'B. 4√2', 'C. 8', 'D. 16√2'], correct: 1,
+                                hint: 'Na tablicy mamy: bok = 4√2.',
+                                ok: 'Trening 2 rozwiązany: B!',
+                                board: 'Odpowiedź: B. 4√2 ✔'
+                            }
+                        ]
                     }
                 ]
             },
@@ -1562,6 +1672,152 @@ class RadicalAlchemistGame {
                                 board: 'Odpowiedź: B. 30 ✔'
                             }
                         ]
+                    },
+                    {
+                        tag: 'Trening 3',
+                        problem: 'Liczbę 2√12 + √3 można zapisać w postaci:',
+                        resultLine: '2√12 + √3 = 4√3 + √3 = 5√3',
+                        answerLabel: 'Odpowiedź B: 5√3',
+                        steps: [
+                            {
+                                q: 'Zacznij od √12. Jak go rozbić?',
+                                say: 'Chcemy dostać √3, więc szukamy kwadratu w 12.',
+                                choices: ['4 · 3', '6 · 2', '12 · 1'], correct: 0,
+                                hint: '4 = 2 · 2 to kwadrat, a 4 · 3 = 12.',
+                                wrong: { 1: '6 · 2 = 12, ale ani 6, ani 2 nie jest kwadratem.', 2: '12 · 1 = 12, ale nic z tego nie wyciągniemy.' },
+                                ok: 'Tak! 12 = 4 · 3.',
+                                board: '√12 = √(4 · 3)'
+                            },
+                            {
+                                q: 'Ile wynosi √12 po uproszczeniu?',
+                                say: '√12 = √4 · √3 = ? · √3',
+                                choices: ['4√3', '2√3', '12√3'], correct: 1,
+                                hint: '√4 = 2, bo 2 · 2 = 4.',
+                                wrong: { 0: '√4 to 2, nie 4.' },
+                                ok: 'Brawo! √12 = 2√3.',
+                                board: '√12 = 2√3'
+                            },
+                            {
+                                q: 'Ile wynosi 2√12 ?',
+                                say: 'Wstawiamy: 2√12 = 2 · 2√3 = ?',
+                                choices: ['4√3', '5√3', '2√3'], correct: 0,
+                                hint: 'Pomnóż liczby przed pierwiastkiem: 2 · 2.',
+                                wrong: { 1: 'Przy mnożeniu 2 · 2 = 4 (to nie dodawanie).' },
+                                ok: 'Świetnie! 2√12 = 4√3.',
+                                board: '2√12 = 2 · 2√3 = 4√3'
+                            },
+                            {
+                                q: 'Teraz dodaj: 4√3 + √3 = ?',
+                                say: 'Pierwiastki są jednakowe! Pamiętaj: √3 to to samo co 1√3.',
+                                choices: ['4√3', '5√3', '5√6'], correct: 1,
+                                hint: '4 + 1 = 5, a √3 zostaje bez zmian.',
+                                wrong: { 0: 'Prawie! Pamiętaj o dodaniu jednego √3: 4 + 1.', 2: 'Liczba pod pierwiastkiem zostaje 3 – nie zmieniamy jej.' },
+                                ok: 'Tak! 4√3 + √3 = 5√3.',
+                                board: '4√3 + √3 = 5√3'
+                            },
+                            {
+                                q: 'Zaznacz odpowiedź: 2√12 + √3 można zapisać w postaci:',
+                                say: 'Wynik masz na tablicy. Znajdź go wśród liter!',
+                                choices: ['A. 3√3', 'B. 5√3', 'C. 5√6', 'D. 8√3'], correct: 1,
+                                hint: 'Na tablicy wyszło 5√3.',
+                                ok: 'Trening 3 rozwiązany: B!',
+                                board: 'Odpowiedź: B. 5√3 ✔'
+                            }
+                        ]
+                    },
+                    {
+                        tag: 'Trening 4',
+                        problem: 'Liczbę √50 + 3√2 można zapisać w postaci:',
+                        resultLine: '√50 + 3√2 = 5√2 + 3√2 = 8√2',
+                        answerLabel: 'Odpowiedź A: 8√2',
+                        steps: [
+                            {
+                                q: 'Zacznij od √50. Jak go rozbić?',
+                                say: 'Chcemy dostać √2, więc szukamy kwadratu w 50.',
+                                choices: ['25 · 2', '10 · 5', '20 · 3'], correct: 0,
+                                hint: '25 = 5 · 5 to kwadrat, a 25 · 2 = 50.',
+                                wrong: { 1: '10 · 5 = 50, ale ani 10, ani 5 nie jest kwadratem.', 2: '20 · 3 = 60, a nie 50.' },
+                                ok: 'Tak! 50 = 25 · 2.',
+                                board: '√50 = √(25 · 2)'
+                            },
+                            {
+                                q: 'Ile to jest √25 · √2 ?',
+                                say: '√50 = √25 · √2 = ? · √2',
+                                choices: ['25√2', '5√2', '2√5'], correct: 1,
+                                hint: '√25 to 5, bo 5 · 5 = 25.',
+                                wrong: { 0: '√25 to 5, nie 25.' },
+                                ok: 'Brawo! √50 = 5√2.',
+                                board: '√50 = 5√2'
+                            },
+                            {
+                                q: 'Teraz dodaj: 5√2 + 3√2 = ?',
+                                say: 'Jednakowe pierwiastki – jak 5 jabłek + 3 jabłka.',
+                                choices: ['15√2', '8√2', '8√4'], correct: 1,
+                                hint: '5 + 3 = 8, a √2 zostaje bez zmian.',
+                                wrong: { 0: 'Dodajemy (5 + 3), nie mnożymy.', 2: 'Pod pierwiastkiem zostaje 2.' },
+                                ok: 'Tak! 5√2 + 3√2 = 8√2.',
+                                board: '5√2 + 3√2 = 8√2'
+                            },
+                            {
+                                q: 'Zaznacz odpowiedź: √50 + 3√2 można zapisać w postaci:',
+                                say: 'Wynik masz na tablicy. Znajdź go wśród liter!',
+                                choices: ['A. 8√2', 'B. 15√2', 'C. 8√5', 'D. 2√2'], correct: 0,
+                                hint: 'Na tablicy wyszło 8√2.',
+                                ok: 'Trening 4 rozwiązany: A!',
+                                board: 'Odpowiedź: A. 8√2 ✔'
+                            }
+                        ]
+                    },
+                    {
+                        tag: 'Trening 5',
+                        problem: 'Jeżeli 3√75 = a√3, to liczba a jest równa:',
+                        resultLine: '3√75 = 3 · 5√3 = 15√3, więc a = 15',
+                        answerLabel: 'Odpowiedź C: 15',
+                        steps: [
+                            {
+                                q: 'Rozbij 75 tak, żeby zostało √3.',
+                                say: 'Szukamy: 75 = (kwadrat) · 3.',
+                                choices: ['25 · 3', '15 · 5', '9 · 8'], correct: 0,
+                                hint: '25 = 5 · 5 to kwadrat, a 25 · 3 = 75. Zostaje 3!',
+                                wrong: { 1: '15 · 5 = 75, ale 15 nie jest kwadratem.', 2: '9 · 8 = 72, a nie 75.' },
+                                ok: 'Tak! 75 = 25 · 3.',
+                                board: '√75 = √(25 · 3)'
+                            },
+                            {
+                                q: 'Ile to jest √25 · √3 ?',
+                                say: '√75 = √25 · √3 = ? · √3',
+                                choices: ['25√3', '5√3', '3√5'], correct: 1,
+                                hint: '√25 to 5, bo 5 · 5 = 25.',
+                                wrong: { 0: '√25 to 5, nie 25.' },
+                                ok: 'Brawo! √75 = 5√3.',
+                                board: '√75 = 5√3'
+                            },
+                            {
+                                q: 'Ile wynosi 3√75 ?',
+                                say: 'Wstawiamy: 3√75 = 3 · 5√3 = ?',
+                                choices: ['8√3', '15√3', '75√3'], correct: 1,
+                                hint: 'Pomnóż liczby przed pierwiastkiem: 3 · 5.',
+                                wrong: { 0: 'Mnożymy 3 · 5, a nie dodajemy.' },
+                                ok: 'Świetnie! 3√75 = 15√3.',
+                                board: '3√75 = 3 · 5√3 = 15√3'
+                            },
+                            {
+                                q: 'Porównaj: 15√3 = a√3. Ile wynosi a ?',
+                                say: 'Po obu stronach jest √3, więc liczby przed pierwiastkiem muszą być równe.',
+                                choices: ['3', '5', '15'], correct: 2,
+                                hint: 'Z jednej strony 15√3, z drugiej a√3. Zatem a = 15.',
+                                ok: 'Tak! a = 15.',
+                                board: '15√3 = a√3  ➔  a = 15'
+                            },
+                            {
+                                q: 'Zaznacz odpowiedź: liczba a jest równa:',
+                                say: 'Wynik masz na tablicy. Znajdź go wśród liter!',
+                                choices: ['A. 75', 'B. 25', 'C. 15', 'D. 5'], correct: 2,
+                                hint: 'Na tablicy wyszło a = 15.',
+                                ok: 'Trening 5 rozwiązany: C!',
+                                board: 'Odpowiedź: C. 15 ✔'
+                            }
+                        ]
                     }
                 ]
             },
@@ -1627,24 +1883,350 @@ class RadicalAlchemistGame {
                                 board: 'Odpowiedź: A. 3∛2 + 5√6 ✔'
                             }
                         ]
+                    },
+                    {
+                        tag: 'Trening 6',
+                        problem: 'Sumę ∛16 + √12 można zapisać w postaci:',
+                        resultLine: '∛16 + √12 = 2∛2 + 2√3',
+                        answerLabel: 'Odpowiedź C: 2∛2 + 2√3',
+                        steps: [
+                            {
+                                q: 'Zacznij od ∛16. Rozbij 16 na sześcian · resztę.',
+                                say: 'Pierwiastek 3. stopnia – szukamy SZEŚCIANU: 8, 27, 64...',
+                                choices: ['8 · 2', '4 · 4', '16 · 1'], correct: 0,
+                                hint: '8 = 2 · 2 · 2 to sześcian, a 8 · 2 = 16.',
+                                wrong: { 1: '4 nie jest sześcianem. Sześciany to 8, 27, 64...', 2: '16 · 1 – nic nie wyciągniemy.' },
+                                ok: 'Tak! 16 = 8 · 2.',
+                                board: '∛16 = ∛(8 · 2)'
+                            },
+                            {
+                                q: 'Ile to jest ∛8 · ∛2 ?',
+                                say: '∛16 = ∛8 · ∛2 = ? · ∛2',
+                                choices: ['8∛2', '2∛2', '2√2'], correct: 1,
+                                hint: '∛8 to 2, bo 2 · 2 · 2 = 8.',
+                                wrong: { 0: '∛8 to 2, nie 8.', 2: 'To nadal pierwiastek 3. stopnia – zostaje ∛2.' },
+                                ok: 'Brawo! ∛16 = 2∛2.',
+                                board: '∛16 = 2∛2'
+                            },
+                            {
+                                q: 'Teraz √12. Rozbij 12 na kwadrat · resztę.',
+                                say: 'Pierwiastek 2. stopnia – szukamy KWADRATU: 4, 9, 16...',
+                                choices: ['4 · 3', '6 · 2', '12 · 1'], correct: 0,
+                                hint: '4 = 2 · 2 to kwadrat, a 4 · 3 = 12.',
+                                wrong: { 1: '6 ani 2 nie jest kwadratem.', 2: '12 · 1 – nic nie wyciągniemy.' },
+                                ok: 'Tak! 12 = 4 · 3.',
+                                board: '√12 = √(4 · 3)'
+                            },
+                            {
+                                q: 'Ile to jest √4 · √3 ?',
+                                say: '√12 = √4 · √3 = ? · √3',
+                                choices: ['4√3', '2√3', '3√2'], correct: 1,
+                                hint: '√4 to 2, bo 2 · 2 = 4.',
+                                wrong: { 0: '√4 to 2, nie 4.' },
+                                ok: 'Świetnie! √12 = 2√3.',
+                                board: '√12 = 2√3'
+                            },
+                            {
+                                q: 'Mamy 2∛2 + 2√3. Czy można to dodać w jeden pierwiastek?',
+                                say: '∛ i √ to różne gatunki – jak pułapka z Modułu D!',
+                                choices: ['Tak: 4√2', 'Tak: 4∛3', 'Nie – suma zostaje 2∛2 + 2√3'], correct: 2,
+                                hint: 'Dodawać można tylko JEDNAKOWE pierwiastki. Tu jest ∛2 i √3.',
+                                ok: 'Mądra decyzja! Suma zostaje w tej postaci.',
+                                board: '∛16 + √12 = 2∛2 + 2√3'
+                            },
+                            {
+                                q: 'Zaznacz odpowiedź: sumę ∛16 + √12 można zapisać w postaci:',
+                                say: 'Wynik masz na tablicy. Znajdź go wśród liter!',
+                                choices: ['A. 4∛5', 'B. 2∛3 + 2√2', 'C. 2∛2 + 2√3', 'D. 2∛2 + 4√3'], correct: 2,
+                                hint: 'Na tablicy wyszło 2∛2 + 2√3.',
+                                ok: 'Trening 6 rozwiązany: C!',
+                                board: 'Odpowiedź: C. 2∛2 + 2√3 ✔'
+                            }
+                        ]
+                    },
+                    {
+                        tag: 'Trening 7',
+                        problem: 'Sumę ∛24 + √8 można zapisać w postaci:',
+                        resultLine: '∛24 + √8 = 2∛3 + 2√2',
+                        answerLabel: 'Odpowiedź A: 2∛3 + 2√2',
+                        steps: [
+                            {
+                                q: 'Zacznij od ∛24. Rozbij 24 na sześcian · resztę.',
+                                say: 'Szukamy SZEŚCIANU: 8, 27, 64...',
+                                choices: ['8 · 3', '4 · 6', '12 · 2'], correct: 0,
+                                hint: '8 = 2 · 2 · 2 to sześcian, a 8 · 3 = 24.',
+                                wrong: { 1: '4 nie jest sześcianem.', 2: '12 nie jest sześcianem.' },
+                                ok: 'Tak! 24 = 8 · 3.',
+                                board: '∛24 = ∛(8 · 3)'
+                            },
+                            {
+                                q: 'Ile to jest ∛8 · ∛3 ?',
+                                say: '∛24 = ∛8 · ∛3 = ? · ∛3',
+                                choices: ['8∛3', '2∛3', '3∛2'], correct: 1,
+                                hint: '∛8 to 2, bo 2 · 2 · 2 = 8.',
+                                wrong: { 0: '∛8 to 2, nie 8.', 2: 'Zostaje ∛3, a przed nim stoi wynik z ∛8.' },
+                                ok: 'Brawo! ∛24 = 2∛3.',
+                                board: '∛24 = 2∛3'
+                            },
+                            {
+                                q: 'Teraz √8. Rozbij 8 na kwadrat · resztę.',
+                                say: 'Szukamy KWADRATU: 4, 9, 16...',
+                                choices: ['4 · 2', '8 · 1', '3 · 3'], correct: 0,
+                                hint: '4 = 2 · 2 to kwadrat, a 4 · 2 = 8.',
+                                wrong: { 1: '8 · 1 – nic nie wyciągniemy.', 2: '3 · 3 = 9, a nie 8.' },
+                                ok: 'Tak! 8 = 4 · 2.',
+                                board: '√8 = √(4 · 2)'
+                            },
+                            {
+                                q: 'Ile to jest √4 · √2 ?',
+                                say: '√8 = √4 · √2 = ? · √2',
+                                choices: ['4√2', '2√2', '2√4'], correct: 1,
+                                hint: '√4 to 2, bo 2 · 2 = 4.',
+                                wrong: { 0: '√4 to 2, nie 4.' },
+                                ok: 'Świetnie! √8 = 2√2.',
+                                board: '√8 = 2√2'
+                            },
+                            {
+                                q: 'Mamy 2∛3 + 2√2. Czy można to dodać w jeden pierwiastek?',
+                                say: 'Znów dwa różne gatunki: ∛ i √.',
+                                choices: ['Tak: 4√6', 'Nie – suma zostaje 2∛3 + 2√2', 'Tak: 4∛5'], correct: 1,
+                                hint: 'Dodajemy tylko JEDNAKOWE pierwiastki. Tu jest ∛3 i √2.',
+                                ok: 'Mądra decyzja! Suma zostaje w tej postaci.',
+                                board: '∛24 + √8 = 2∛3 + 2√2'
+                            },
+                            {
+                                q: 'Zaznacz odpowiedź: sumę ∛24 + √8 można zapisać w postaci:',
+                                say: 'Wynik masz na tablicy. Znajdź go wśród liter!',
+                                choices: ['A. 2∛3 + 2√2', 'B. 2∛2 + 2√3', 'C. 4∛6', 'D. 2∛3 + 4√2'], correct: 0,
+                                hint: 'Na tablicy wyszło 2∛3 + 2√2.',
+                                ok: 'Trening 7 rozwiązany: A!',
+                                board: 'Odpowiedź: A. 2∛3 + 2√2 ✔'
+                            }
+                        ]
+                    }
+                ]
+            },
+            H: {
+                title: 'Tajemnica IV: Księga Definicji',
+                missions: [
+                    {
+                        tag: 'Przykład 1 (√)',
+                        problem: 'Pierwiastek kwadratowy z liczby nieujemnej a to taka liczba NIEUJEMNA, której kwadrat jest równy a. Jeżeli a ≥ 0, to √a = b, gdy b² = a i b ≥ 0. Na przykład: √64 = 8, bo 8² = 64 i 8 ≥ 0.',
+                        resultLine: '√64 = 8, bo 8² = 64 i 8 ≥ 0',
+                        answerLabel: 'Odpowiedź: √64 = 8',
+                        steps: [
+                            {
+                                q: 'Jakiej liczby szukamy w √64?',
+                                say: 'Pierwiastek kwadratowy to liczba b, która podniesiona do kwadratu (b · b) daje 64.',
+                                choices: ['b, gdzie b · b = 64', 'b, gdzie b + b = 64', 'b, gdzie b · 2 = 64'], correct: 0,
+                                hint: 'Kwadrat liczby to liczba razy ona sama: b² = b · b.',
+                                wrong: { 1: 'b + b to podwojenie, a nie kwadrat.', 2: 'Kwadrat to b · b, a nie b · 2.' },
+                                ok: 'Tak! Szukamy b, dla którego b² = 64.',
+                                board: '√64 = b, gdy b² = 64'
+                            },
+                            {
+                                q: 'Która liczba spełnia b² = 64 ?',
+                                say: 'Sprawdź: 7 · 7 = 49, 8 · 8 = ?, 9 · 9 = 81.',
+                                choices: ['7', '8', '32'], correct: 1,
+                                hint: '8 · 8 = 64.',
+                                wrong: { 0: '7 · 7 = 49, a nie 64.', 2: '32 to połowa z 64, a 32 · 32 jest o wiele za duże.' },
+                                ok: 'Brawo! 8 · 8 = 64.',
+                                board: '8² = 64'
+                            },
+                            {
+                                q: 'Pierwiastek kwadratowy musi być nieujemny (b ≥ 0). Ile wynosi √64 ?',
+                                say: 'Również (−8)² = 64, ale pierwiastek kwadratowy to ZAWSZE liczba ≥ 0.',
+                                choices: ['−8', '8', '±8'], correct: 1,
+                                hint: 'Z definicji b ≥ 0, więc wybieramy tylko dodatnią 8.',
+                                wrong: { 0: '−8 jest ujemne, a pierwiastek kwadratowy nie może być ujemny.', 2: 'Symbol √ oznacza jedną liczbę – tę nieujemną.' },
+                                ok: 'Dokładnie! √64 = 8, bo 8² = 64 i 8 ≥ 0.',
+                                board: '√64 = 8, bo 8² = 64 i 8 ≥ 0'
+                            }
+                        ]
+                    },
+                    {
+                        tag: 'Przykład 2 (√)',
+                        problem: 'Oblicz √(2 7/9). Z zeszytu: √(2 7/9) = 5/3, bo (5/3)² = 25/9 = 2 7/9 i 5/3 ≥ 0.',
+                        resultLine: '√(2 7/9) = √(25/9) = 5/3',
+                        answerLabel: 'Odpowiedź: 5/3',
+                        steps: [
+                            {
+                                q: 'Zamień 2 7/9 na ułamek niewłaściwy.',
+                                say: '2 7/9 = (2 · 9 + 7) / 9 = ?',
+                                choices: ['25/9', '14/9', '27/9'], correct: 0,
+                                hint: '2 · 9 = 18, 18 + 7 = 25. Mianownik 9 zostaje.',
+                                wrong: { 1: '14 to 2 · 7. Najpierw 2 · 9, potem dodaj 7.', 2: '27/9 to 3, a my mamy 2 7/9.' },
+                                ok: 'Tak! 2 7/9 = 25/9.',
+                                board: '2 7/9 = 25/9'
+                            },
+                            {
+                                q: 'Ile to √(25/9) ?',
+                                say: 'Pierwiastek z ułamka: liczymy osobno z licznika i z mianownika: √25 / √9.',
+                                choices: ['5/3', '25/3', '5/9'], correct: 0,
+                                hint: '√25 = 5, bo 5 · 5 = 25. √9 = 3, bo 3 · 3 = 9.',
+                                wrong: { 1: 'Z licznika też trzeba wyciągnąć pierwiastek: √25 = 5.', 2: 'Z mianownika też: √9 = 3, a nie 9.' },
+                                ok: 'Super! √(25/9) = 5/3.',
+                                board: '√(25/9) = √25 / √9 = 5/3'
+                            },
+                            {
+                                q: 'Sprawdźmy z definicji: ile wynosi (5/3)² ?',
+                                say: '(5/3)² = (5 · 5) / (3 · 3) = ?',
+                                choices: ['25/9', '10/6', '25/3'], correct: 0,
+                                hint: 'Podnosimy do kwadratu i licznik, i mianownik.',
+                                wrong: { 1: '10/6 to 5/3 · 2. Kwadrat to mnożenie przez samą siebie.', 2: 'Mianownik też podnosimy do kwadratu: 3 · 3 = 9.' },
+                                ok: 'Zgadza się! (5/3)² = 25/9 = 2 7/9 i 5/3 ≥ 0.',
+                                board: '(5/3)² = 25/9 = 2 7/9 ✔'
+                            }
+                        ]
+                    },
+                    {
+                        tag: 'Przykład 3 (√)',
+                        problem: 'Oblicz √1,44. Z zeszytu: √1,44 = 1,2, bo 1,2² = 1,44.',
+                        resultLine: '√1,44 = 1,2, bo 1,2² = 1,44',
+                        answerLabel: 'Odpowiedź: 1,2',
+                        steps: [
+                            {
+                                q: 'Ile wynosi 1,2 · 1,2 ?',
+                                say: 'Policz 12 · 12 = 144, a potem ustaw przecinek: każdy czynnik ma 1 cyfrę po przecinku, więc wynik ma 2 (1 + 1).',
+                                choices: ['1,44', '14,4', '0,144'], correct: 0,
+                                hint: '12 · 12 = 144. Obie liczby mają po 1 cyfrze po przecinku, więc wynik ma 2.',
+                                wrong: { 1: 'Za duży wynik. 1,2 jest tylko trochę większe od 1.', 2: 'Za mały wynik. 1,2 · 1,2 jest więcej niż 1.' },
+                                ok: 'Tak! 1,2 · 1,2 = 1,44.',
+                                board: '1,2² = 1,44'
+                            },
+                            {
+                                q: 'Ile więc wynosi √1,44 ?',
+                                say: 'Skoro 1,2² = 1,44 i 1,2 ≥ 0, to...',
+                                choices: ['0,12', '1,2', '12'], correct: 1,
+                                hint: 'Szukamy liczby, która podniesiona do kwadratu daje 1,44. To 1,2.',
+                                wrong: { 0: '0,12² = 0,0144, to za mało.', 2: '12² = 144, a nie 1,44.' },
+                                ok: 'Brawo! √1,44 = 1,2.',
+                                board: '√1,44 = 1,2, bo 1,2² = 1,44'
+                            }
+                        ]
+                    },
+                    {
+                        tag: 'Przykład 4 (∛)',
+                        problem: 'Pierwiastek sześcienny możemy obliczać z DOWOLNEJ liczby rzeczywistej. Dla dowolnej liczby a: ∛a = b, gdy b³ = a. Na przykład: ∛64 = 4, bo 4³ = 64.',
+                        resultLine: '∛64 = 4, bo 4³ = 64',
+                        answerLabel: 'Odpowiedź: ∛64 = 4',
+                        steps: [
+                            {
+                                q: 'Jakiej liczby szukamy w ∛64?',
+                                say: 'Pierwiastek sześcienny to liczba b, dla której b³ = b · b · b = 64.',
+                                choices: ['b · b = 64', 'b · b · b = 64', 'b · 3 = 64'], correct: 1,
+                                hint: 'Sześcian to TRZY razy ta sama liczba.',
+                                wrong: { 0: 'b · b to kwadrat. Przy ∛ mnożymy trzy razy.', 2: 'b · 3 to nie sześcian.' },
+                                ok: 'Tak! Szukamy b, dla którego b³ = 64.',
+                                board: '∛64 = b, gdy b³ = 64'
+                            },
+                            {
+                                q: 'Ile to jest 4³ ?',
+                                say: '4³ = 4 · 4 · 4 = 16 · 4 = ?',
+                                choices: ['12', '64', '16'], correct: 1,
+                                hint: '4 · 4 = 16, a 16 · 4 = 64.',
+                                wrong: { 0: '12 to 4 · 3. Sześcian to 4 · 4 · 4.', 2: '16 to tylko 4 · 4.' },
+                                ok: 'Super! 4³ = 64.',
+                                board: '4³ = 64'
+                            },
+                            {
+                                q: 'Ile więc wynosi ∛64 ?',
+                                say: 'Skoro 4³ = 64, to...',
+                                choices: ['8', '4', '21'], correct: 1,
+                                hint: 'Szukana liczba to ta, której sześcian wynosi 64.',
+                                wrong: { 0: '√64 = 8, ale to pierwiastek KWADRATOWY. Przy ∛ liczba mnożona jest 3 razy.', 2: '64 : 3 to nie jest pierwiastek.' },
+                                ok: 'Dokładnie! ∛64 = 4, bo 4³ = 64.',
+                                board: '∛64 = 4, bo 4³ = 64'
+                            }
+                        ]
+                    },
+                    {
+                        tag: 'Przykład 5 (∛ ujemny)',
+                        problem: 'Oblicz ∛(−1/8). Z zeszytu: ∛(−1/8) = −1/2, bo (−1/2)³ = −1/8. Pierwiastek sześcienny może być ujemny!',
+                        resultLine: '∛(−1/8) = −1/2, bo (−1/2)³ = −1/8',
+                        answerLabel: 'Odpowiedź: −1/2',
+                        steps: [
+                            {
+                                q: 'Czy ∛ można policzyć z liczby ujemnej?',
+                                say: 'Przy √ liczba pod pierwiastkiem musi być ≥ 0. Jak jest przy ∛?',
+                                choices: ['Nie, nigdy', 'Tak, z dowolnej liczby rzeczywistej', 'Tylko z −1'], correct: 1,
+                                hint: 'Z zeszytu: „Pierwiastek sześcienny możemy obliczać z dowolnej liczby rzeczywistej”.',
+                                wrong: { 0: 'To dotyczy √ (kwadratowego). ∛ działa także dla liczb ujemnych.', 2: 'Nie tylko z −1, ale z każdej liczby.' },
+                                ok: 'Tak! ∛ działa dla każdej liczby.',
+                                board: '∛a istnieje dla każdej liczby a'
+                            },
+                            {
+                                q: 'Ile wynosi (−1/2)³ ?',
+                                say: '(−1/2) · (−1/2) = 1/4 (minus razy minus to plus), a potem 1/4 · (−1/2) = ?',
+                                choices: ['1/8', '−1/8', '−3/2'], correct: 1,
+                                hint: 'Trzy minusy w iloczynie dają minus. 1 · 1 · 1 = 1 i 2 · 2 · 2 = 8.',
+                                wrong: { 0: 'Prawie, ale trzy ujemne czynniki dają wynik UJEMNY.', 2: '−3/2 to −1/2 · 3. Sześcian to mnożenie trzy razy.' },
+                                ok: 'Super! (−1/2)³ = −1/8.',
+                                board: '(−1/2)³ = −1/8'
+                            },
+                            {
+                                q: 'Ile więc wynosi ∛(−1/8) ?',
+                                say: 'Skoro (−1/2)³ = −1/8, to...',
+                                choices: ['1/2', '−1/2', '−1/4'], correct: 1,
+                                hint: 'Szukana liczba to ta, której sześcian wynosi −1/8.',
+                                wrong: { 0: '(1/2)³ = 1/8, a my mamy −1/8.', 2: '(−1/4)³ = −1/64, to za mało.' },
+                                ok: 'Brawo! ∛(−1/8) = −1/2.',
+                                board: '∛(−1/8) = −1/2, bo (−1/2)³ = −1/8'
+                            }
+                        ]
+                    },
+                    {
+                        tag: 'Przykład 6 (∛)',
+                        problem: 'Oblicz ∛(3 3/8). Z zeszytu: ∛(3 3/8) = 3/2, bo (3/2)³ = 27/8 = 3 3/8.',
+                        resultLine: '∛(3 3/8) = ∛(27/8) = 3/2',
+                        answerLabel: 'Odpowiedź: 3/2',
+                        steps: [
+                            {
+                                q: 'Zamień 3 3/8 na ułamek niewłaściwy.',
+                                say: '3 3/8 = (3 · 8 + 3) / 8 = ?',
+                                choices: ['27/8', '9/8', '24/8'], correct: 0,
+                                hint: '3 · 8 = 24, 24 + 3 = 27. Mianownik 8 zostaje.',
+                                wrong: { 1: '9 to 3 · 3. Najpierw 3 · 8, potem dodaj 3.', 2: '24/8 to samo 3 – brakuje jeszcze 3/8.' },
+                                ok: 'Tak! 3 3/8 = 27/8.',
+                                board: '3 3/8 = 27/8'
+                            },
+                            {
+                                q: 'Ile to ∛(27/8) ?',
+                                say: 'Osobno z licznika i mianownika: ∛27 / ∛8.',
+                                choices: ['9/4', '3/2', '27/2'], correct: 1,
+                                hint: '∛27 = 3, bo 3 · 3 · 3 = 27. ∛8 = 2, bo 2 · 2 · 2 = 8.',
+                                wrong: { 0: '9 i 4 to kwadraty (√), a my liczymy ∛.', 2: 'Z licznika też trzeba wyciągnąć ∛27 = 3.' },
+                                ok: 'Brawo! ∛(27/8) = 3/2.',
+                                board: '∛(27/8) = ∛27 / ∛8 = 3/2'
+                            },
+                            {
+                                q: 'Sprawdź: ile wynosi (3/2)³ ?',
+                                say: '(3/2)³ = (3 · 3 · 3) / (2 · 2 · 2) = ?',
+                                choices: ['9/6', '27/8', '27/6'], correct: 1,
+                                hint: 'Sześcian i licznika, i mianownika: 27 / 8.',
+                                wrong: { 0: '9/6 to 3/2 · 3. Sześcian to mnożenie trzy razy.', 2: 'Mianownik też do sześcianu: 2 · 2 · 2 = 8.' },
+                                ok: 'Zgadza się! (3/2)³ = 27/8 = 3 3/8.',
+                                board: '(3/2)³ = 27/8 = 3 3/8 ✔'
+                            }
+                        ]
                     }
                 ]
             }
         };
     }
 
-    secretDiagramSVG(type) {
+    secretDiagramSVG(type, side = 6) {
         if (type !== 'twin-squares') return '';
         const lbl = 'fill="#FDE68A" font-size="13" font-weight="700" font-family="Outfit, sans-serif"';
         return `
-            <svg class="secret-diagram" viewBox="0 0 270 155" role="img" aria-label="Dwa kwadraty: duży ABCD o boku 6 i mniejszy EFGH">
+            <svg class="secret-diagram" viewBox="0 0 270 155" role="img" aria-label="Dwa kwadraty: duży ABCD o boku ${side} i mniejszy EFGH">
                 <rect x="22" y="16" width="120" height="120" rx="4" fill="rgba(167,139,250,0.28)" stroke="#A78BFA" stroke-width="3"/>
                 <rect x="168" y="51" width="85" height="85" rx="4" fill="rgba(52,211,153,0.25)" stroke="#34D399" stroke-width="3"/>
                 <text x="10" y="14" ${lbl}>D</text><text x="146" y="14" ${lbl}>C</text>
                 <text x="10" y="150" ${lbl}>A</text><text x="146" y="150" ${lbl}>B</text>
                 <text x="156" y="49" ${lbl}>H</text><text x="255" y="49" ${lbl}>G</text>
                 <text x="156" y="150" ${lbl}>E</text><text x="255" y="150" ${lbl}>F</text>
-                <text x="82" y="84" text-anchor="middle" fill="#fff" font-size="30" font-weight="800" font-family="Fredoka, Outfit, sans-serif">6</text>
+                <text x="82" y="84" text-anchor="middle" fill="#fff" font-size="30" font-weight="800" font-family="Fredoka, Outfit, sans-serif">${side}</text>
                 <text x="210" y="102" text-anchor="middle" fill="#fff" font-size="30" font-weight="800" font-family="Fredoka, Outfit, sans-serif">?</text>
             </svg>
         `;
@@ -1686,7 +2268,7 @@ class RadicalAlchemistGame {
             <div class="secret-book-card">
                 <div class="secret-book-title">📖 ${mission.tag} z zeszytu</div>
                 <div class="secret-book-problem">${mission.problem}</div>
-                ${this.secretDiagramSVG(mission.diagram)}
+                ${this.secretDiagramSVG(mission.diagram, mission.diagramSide || 6)}
             </div>
 
             <div class="secret-board">
@@ -1748,6 +2330,7 @@ class RadicalAlchemistGame {
             btn.classList.add('dim', 'gentle-wobble');
             btn.disabled = true;
             st.wrong++;
+            st.missionWrong = (st.missionWrong || 0) + 1;
             feedback.className = 'secret-feedback soft';
             feedback.textContent = '🌱 ' + ((step.wrong && step.wrong[idx]) || 'Prawie! Spróbuj inną odpowiedź. Zerknij na podpowiedź 👁️.');
             if (st.wrong >= 2) {
@@ -1764,6 +2347,9 @@ class RadicalAlchemistGame {
 
         window.AlchemistAudio.playGrandFanfare ? window.AlchemistAudio.playMerge() : null;
         this.addEssence(40);
+        const perfect = !st.missionWrong;
+        if (perfect) this.addEssence(30);
+        st.missionWrong = 0;
         this.advanceSpire();
         const cx = window.innerWidth / 2;
         window.AlchemistParticles.burst(cx, window.innerHeight / 2, '#FBBF24', 45);
@@ -1773,6 +2359,7 @@ class RadicalAlchemistGame {
             <div class="secret-done-card">
                 <div class="secret-done-trophy">🏆</div>
                 <div class="secret-done-title">${mission.tag} rozwiązane!</div>
+                <div class="secret-done-line">${perfect ? '🌟 Bez jednej pomyłki! Bonus +30 💎' : '💪 Dotarłaś do końca – to się liczy! +40 💎'} • Zadanie ${st.mission + 1} z ${mod.missions.length}</div>
                 <div class="secret-done-line">${mission.resultLine}</div>
                 <div class="secret-done-answer">${mission.answerLabel}</div>
                 <div class="secret-board secret-board-final">
@@ -1797,7 +2384,9 @@ class RadicalAlchemistGame {
             if (modId === 'E') {
                 this.showModuleSuccessModal('Tajemnica I rozwiązana!', 'Poradziłaś sobie z bliźniaczymi kwadratami! Pole, bok i pierwiastek – wszystko już łączysz.', () => this.loadModule('F'));
             } else if (modId === 'F') {
-                this.showModuleSuccessModal('Tajemnica II rozwiązana!', 'Upraszczasz pierwiastki i dodajesz jednakowe kryształy. Została ostatnia Tajemnica!', () => this.loadModule('G'));
+                this.showModuleSuccessModal('Tajemnica II rozwiązana!', 'Upraszczasz pierwiastki i dodajesz jednakowe kryształy. Czekają kolejne Tajemnice!', () => this.loadModule('G'));
+            } else if (modId === 'G') {
+                this.showModuleSuccessModal('Tajemnica III rozwiązana!', 'Rozróżniasz ∛ i √! Została ostatnia Tajemnica: Księga Definicji.', () => this.loadModule('H'));
             } else {
                 this.showGrandFinale();
             }
