@@ -18,7 +18,8 @@ class RadicalAlchemistGame {
             F: { currentStep: 0, completed: false },
             G: { currentStep: 0, completed: false },
             H: { currentStep: 0, completed: false },
-            I: { currentStep: 0, completed: false }
+            I: { currentStep: 0, completed: false },
+            J: { currentStep: 0, completed: false }
         };
 
         // Module A Data (Intuition: Square area to side)
@@ -167,12 +168,14 @@ class RadicalAlchemistGame {
         // Advanced "Tajemnice" (E, F, G) - guided, step-by-step textbook tasks
         this.secretModules = this.buildSecretModules();
         Object.assign(this.secretModules, this.buildTask50Module());
+        Object.assign(this.secretModules, this.buildTask51Module());
         this.secretState = {
             E: { mission: 0, step: 0, wrong: 0, locked: false, board: [] },
             F: { mission: 0, step: 0, wrong: 0, locked: false, board: [] },
             G: { mission: 0, step: 0, wrong: 0, locked: false, board: [] },
             H: { mission: 0, step: 0, wrong: 0, locked: false, board: [] },
-            I: { mission: 0, step: 0, wrong: 0, locked: false, board: [] }
+            I: { mission: 0, step: 0, wrong: 0, locked: false, board: [] },
+            J: { mission: 0, step: 0, wrong: 0, locked: false, board: [] }
         };
 
         // State for active interactions
@@ -418,6 +421,9 @@ class RadicalAlchemistGame {
         } else if (this.currentModule === 'G') {
             hudFormula.innerHTML = `<span class="math-radical">∛(a³·b) = a∛b</span> &nbsp;|&nbsp; <span class="math-radical">√(a²·b) = a√b</span>`;
             hudTip.textContent = "Sześciany: 8, 27, 64. Kwadraty: 4, 9, 16, 25. Różnych pierwiastków nie dodajemy.";
+        } else if (this.currentModule === 'J') {
+            hudFormula.innerHTML = `<span class="math-radical">a√b = √(a²·b)</span> &nbsp;|&nbsp; <span class="math-radical">√a · √b = √(a·b)</span> &nbsp;|&nbsp; <span class="math-radical">(a√b)² = a²·b</span>`;
+            hudTip.textContent = "Aby porównać liczby, zapisz je w tej samej postaci: wszystko pod jednym pierwiastkiem albo wszystko uproszczone.";
         } else if (this.currentModule === 'I') {
             hudFormula.innerHTML = `<span class="math-radical">√a · √a = a</span> &nbsp;|&nbsp; <span class="math-radical">(a√b)² = a² · b</span>`;
             hudTip.textContent = "Ujednolic mianowniki, dodawaj jednakowe pierwiastki, a przy potęgowaniu podnoś do potęgi wszystko: liczbę i pierwiastek.";
@@ -440,7 +446,8 @@ class RadicalAlchemistGame {
             { id: 'F', name: 'Tajemnica II: Zgodne Kryształy', shortName: '🧪 Kryształy', sub: 'Zadania z zeszytu', icon: '🧪' },
             { id: 'G', name: 'Tajemnica III: Dwa Światy', shortName: '🌗 Dwa Światy', sub: 'Zadanie z zeszytu', icon: '🌗' },
             { id: 'H', name: 'Tajemnica IV: Księga Definicji', shortName: '📜 Definicje', sub: 'Pierwiastki √ i ∛ (s. 25)', icon: '📜' },
-            { id: 'I', name: 'Tajemnica V: Zadanie 50', shortName: '✨ Zad. 50', sub: 'Zapisz w najprostszej postaci', icon: '✨' }
+            { id: 'I', name: 'Tajemnica V: Zadanie 50', shortName: '✨ Zad. 50', sub: 'Zapisz w najprostszej postaci', icon: '✨' },
+            { id: 'J', name: 'Tajemnica VI: Zadanie 51', shortName: '🔗 Zad. 51', sub: 'Wskaż pary równych liczb', icon: '🔗' }
         ];
 
         navContainer.innerHTML = '';
@@ -2450,6 +2457,131 @@ class RadicalAlchemistGame {
         };
     }
 
+    // TAJEMNICA VI: ZADANIE 51 - WSKAŻ PARY RÓWNYCH LICZB
+    buildTask51Module() {
+        return {
+            J: {
+                title: 'Tajemnica VI: Zadanie 51',
+                missions: [
+                    {
+                        tag: 'Zadanie 51',
+                        problem: 'Wskaż pary równych liczb:  2√3,  (2√2)²,  √12,  √6 · √3,  3√2,  √32 · √2',
+                        resultLine: '2√3 = √12,  (2√2)² = √32 · √2 = 8,  √6 · √3 = 3√2',
+                        answerLabel: 'Pary: 2√3 = √12; (2√2)² = √32·√2; √6·√3 = 3√2',
+                        steps: [
+                            {
+                                q: 'Wciągnij 2 pod pierwiastek: 2√3 = ?',
+                                say: 'Liczbę przed pierwiastkiem wkładamy pod pierwiastek jako kwadrat: 2√3 = √(2² · 3) = √(4 · 3).',
+                                choices: ['√12', '√6', '√36'], correct: 0,
+                                hint: '2² = 4, a 4 · 3 = 12.',
+                                wrong: { 1: '√6 to byłoby 2 · 3. Liczbę 2 trzeba podnieść do kwadratu: 4.', 2: '36 to 6². Tu jest 4 · 3 = 12.' },
+                                ok: 'Tak! 2√3 = √12 – to pierwsza para!',
+                                board: '2√3 = √(4 · 3) = √12  ➔  PARA 1: 2√3 = √12'
+                            },
+                            {
+                                q: 'Ile wynosi (2√2)² ?',
+                                say: 'Podnosimy do kwadratu obie części: 2² · (√2)² = 4 · 2 = ?',
+                                choices: ['8', '16', '4√2'], correct: 0,
+                                hint: '(√2)² = 2, a 4 · 2 = 8.',
+                                wrong: { 1: '16 to byłoby 4 · 4. Tu (√2)² = 2, nie 4.', 2: 'Po podniesieniu do kwadratu √ znika – wynik jest liczbą całkowitą.' },
+                                ok: 'Super! (2√2)² = 8.',
+                                board: '(2√2)² = 4 · 2 = 8'
+                            },
+                            {
+                                q: 'Ile wynosi √32 · √2 ?',
+                                say: 'Mnożymy pod jednym dachem: √32 · √2 = √(32 · 2) = √64 = ?',
+                                choices: ['8', '16', '√34'], correct: 0,
+                                hint: '32 · 2 = 64, a √64 = 8, bo 8 · 8 = 64.',
+                                wrong: { 1: '16 to 64 : 4. √64 = 8, bo 8 · 8 = 64.', 2: '√34 powstałoby przy dodawaniu. Tu mnożymy: 32 · 2.' },
+                                ok: 'Brawo! √32 · √2 = 8, czyli to druga para z (2√2)²!',
+                                board: '√32 · √2 = √64 = 8  ➔  PARA 2: (2√2)² = √32 · √2'
+                            },
+                            {
+                                q: 'Ile wynosi √6 · √3 po uproszczeniu?',
+                                say: '√6 · √3 = √18 = √(9 · 2) = ?',
+                                choices: ['3√2', '2√3', '9√2'], correct: 0,
+                                hint: '18 = 9 · 2, a √9 = 3.',
+                                wrong: { 1: '2√3 to √12. Tu mamy √18 = √(9 · 2).', 2: '√9 to 3, nie 9.' },
+                                ok: 'Tak! √6 · √3 = 3√2 – trzecia para!',
+                                board: '√6 · √3 = √18 = 3√2  ➔  PARA 3: √6 · √3 = 3√2'
+                            },
+                            {
+                                q: 'Zaznacz wszystkie trzy pary równych liczb:',
+                                say: 'Pary masz na tablicy. Wybierz ten zestaw, który cały się zgadza!',
+                                choices: [
+                                    '2√3 = √12;  (2√2)² = √32·√2;  √6·√3 = 3√2',
+                                    '2√3 = 3√2;  (2√2)² = √12;  √6·√3 = √32·√2',
+                                    '2√3 = √6·√3;  (2√2)² = 3√2;  √12 = √32·√2'
+                                ], correct: 0,
+                                hint: 'Na tablicy: √12 = 2√3, 8 = 8, 3√2 = √6·√3.',
+                                wrong: { 1: '2√3 to √12, a nie 3√2. Sprawdź tablicę.', 2: '√6·√3 to 3√2, a nie 2√3. Sprawdź tablicę.' },
+                                ok: 'Zadanie 51 rozwiązane: wszystkie trzy pary!',
+                                board: 'Odpowiedź: 2√3 = √12, (2√2)² = √32·√2, √6·√3 = 3√2 ✔'
+                            }
+                        ]
+                    },
+                    {
+                        tag: 'Trening 8',
+                        problem: 'Wskaż pary równych liczb:  3√5,  √45,  (2√3)²,  √6 · √2,  2√3,  √48 · √3',
+                        resultLine: '3√5 = √45,  (2√3)² = √48 · √3 = 12,  √6 · √2 = 2√3',
+                        answerLabel: 'Pary: 3√5 = √45; (2√3)² = √48·√3; √6·√2 = 2√3',
+                        steps: [
+                            {
+                                q: 'Wciągnij 3 pod pierwiastek: 3√5 = ?',
+                                say: '3√5 = √(3² · 5) = √(9 · 5).',
+                                choices: ['√45', '√15', '√25'], correct: 0,
+                                hint: '3² = 9, a 9 · 5 = 45.',
+                                wrong: { 1: '√15 to byłoby 3 · 5. Liczbę 3 trzeba podnieść do kwadratu: 9.', 2: '√25 = 5, to coś innego.' },
+                                ok: 'Tak! 3√5 = √45 – pierwsza para!',
+                                board: '3√5 = √(9 · 5) = √45  ➔  PARA 1: 3√5 = √45'
+                            },
+                            {
+                                q: 'Ile wynosi (2√3)² ?',
+                                say: '2² · (√3)² = 4 · 3 = ?',
+                                choices: ['12', '9', '6'], correct: 0,
+                                hint: '4 · 3 = 12.',
+                                wrong: { 1: '9 to 3². Tu (√3)² = 3, a 2² = 4.', 2: '6 to 2 · 3. Liczbę 2 też podnosimy do kwadratu: 4.' },
+                                ok: 'Super! (2√3)² = 12.',
+                                board: '(2√3)² = 4 · 3 = 12'
+                            },
+                            {
+                                q: 'Ile wynosi √48 · √3 ?',
+                                say: '√(48 · 3) = √144 = ?',
+                                choices: ['12', '14', '48'], correct: 0,
+                                hint: '48 · 3 = 144, a 12 · 12 = 144.',
+                                wrong: { 1: '14 · 14 = 196, a nie 144.', 2: '48 · 48 jest o wiele za duże.' },
+                                ok: 'Brawo! √48 · √3 = 12 – druga para z (2√3)²!',
+                                board: '√48 · √3 = √144 = 12  ➔  PARA 2: (2√3)² = √48 · √3'
+                            },
+                            {
+                                q: 'Ile wynosi √6 · √2 po uproszczeniu?',
+                                say: '√6 · √2 = √12 = √(4 · 3) = ?',
+                                choices: ['2√3', '3√2', '4√3'], correct: 0,
+                                hint: '√4 = 2, a √3 zostaje.',
+                                wrong: { 1: '3√2 to √18. Tu mamy √12 = √(4 · 3).', 2: '√4 to 2, nie 4.' },
+                                ok: 'Tak! √6 · √2 = 2√3 – trzecia para!',
+                                board: '√6 · √2 = √12 = 2√3  ➔  PARA 3: √6 · √2 = 2√3'
+                            },
+                            {
+                                q: 'Zaznacz wszystkie trzy pary równych liczb:',
+                                say: 'Pary masz na tablicy. Wybierz ten zestaw, który cały się zgadza!',
+                                choices: [
+                                    '3√5 = √45;  (2√3)² = √48·√3;  √6·√2 = 2√3',
+                                    '3√5 = 2√3;  (2√3)² = √45;  √6·√2 = √48·√3',
+                                    '3√5 = √48·√3;  (2√3)² = 2√3;  √45 = √6·√2'
+                                ], correct: 0,
+                                hint: 'Na tablicy: 3√5 = √45, 12 = 12, 2√3 = √6·√2.',
+                                wrong: { 1: 'Sprawdź tablicę: 3√5 = √45, a nie 2√3.', 2: 'Sprawdź tablicę: √48·√3 to 12, a nie 3√5.' },
+                                ok: 'Trening 8 rozwiązany!',
+                                board: 'Odpowiedź: 3√5 = √45, (2√3)² = √48·√3, √6·√2 = 2√3 ✔'
+                            }
+                        ]
+                    }
+                ]
+            }
+        };
+    }
+
     secretDiagramSVG(type, side = 6) {
         if (type !== 'twin-squares') return '';
         const lbl = 'fill="#FDE68A" font-size="13" font-weight="700" font-family="Outfit, sans-serif"';
@@ -2624,6 +2756,8 @@ class RadicalAlchemistGame {
                 this.showModuleSuccessModal('Tajemnica III rozwiązana!', 'Rozróżniasz ∛ i √! Czeka Księga Definicji.', () => this.loadModule('H'));
             } else if (modId === 'H') {
                 this.showModuleSuccessModal('Tajemnica IV rozwiązana!', 'Znasz definicje √ i ∛. Czas na zadanie 50: upraszczanie wyrażeń!', () => this.loadModule('I'));
+            } else if (modId === 'I') {
+                this.showModuleSuccessModal('Tajemnica V rozwiązana!', 'Upraszczasz wyrażenia z pierwiastkami. Czas na zadanie 51: szukanie par równych liczb!', () => this.loadModule('J'));
             } else {
                 this.showGrandFinale();
             }
