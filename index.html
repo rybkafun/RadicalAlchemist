@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Alchemist">
+    <meta name="theme-color" content="#121324">
+    <title>The Radical Alchemist — Mistrzyni Pierwiastków</title>
+    <link rel="stylesheet" href="style.css?v=2">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%20y=%220%22%20width=%22100%22%20height=%22100%22><text y=%22.9em%22 font-size=%2290%22>⚗️</text></svg>">
+</head>
+<body>
+
+    <!-- Particle & Visual FX Canvas Overlay -->
+    <canvas id="fx-canvas"></canvas>
+
+    <!-- Top App Header & HUD -->
+    <header class="app-header">
+        <div class="brand-container">
+            <span class="brand-symbol">⚗️</span>
+            <div>
+                <h1 class="brand-title">The Radical Alchemist</h1>
+                <span class="brand-sub">Magiczna Transformacja Pierwiastków • Klasa 8</span>
+            </div>
+        </div>
+
+        <div class="header-status">
+            <!-- Alchemical Spire Tracker (Wieża Alchemika) -->
+            <div class="spire-tracker" title="Postęp budowy Wieży Alchemika">
+                <span class="spire-icon">🏰</span>
+                <div class="spire-tiers">
+                    <div class="spire-tier-node active" id="spire-node-1"></div>
+                    <div class="spire-tier-node" id="spire-node-2"></div>
+                    <div class="spire-tier-node" id="spire-node-3"></div>
+                    <div class="spire-tier-node" id="spire-node-4"></div>
+                    <div class="spire-tier-node" id="spire-node-5"></div>
+                    <div class="spire-tier-node" id="spire-node-6"></div>
+                    <div class="spire-tier-node" id="spire-node-7"></div>
+                    <div class="spire-tier-node" id="spire-node-8"></div>
+                    <div class="spire-tier-node" id="spire-node-9"></div>
+                    <div class="spire-tier-node" id="spire-node-10"></div>
+                    <div class="spire-tier-node" id="spire-node-11"></div>
+                    <div class="spire-tier-node" id="spire-node-12"></div>
+                </div>
+            </div>
+
+            <!-- Essence Points (Dopamine Rewards) -->
+            <div class="essence-pill" title="Zgromadzona Esencja Alchemiczna">
+                <span class="essence-crystal">💎</span>
+                <span id="essence-count">0</span>
+            </div>
+
+            <!-- Utility Buttons -->
+            <div class="header-buttons">
+                <button class="btn-icon-soft" id="btn-show-trophy" title="Pokaż Puchar i Wielki Finał">
+                    🏆
+                </button>
+                <button class="btn-grimoire-trigger" id="btn-open-grimoire" title="Otwórz Księgę Pomocy">
+                    <span>📖</span>
+                    <span>Grimuar</span>
+                </button>
+                <button class="btn-icon-soft" id="btn-sound-toggle" title="Dźwięk włączony">
+                    🔊
+                </button>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Module Navigation Pills (Micro-chunking) -->
+    <nav class="module-navigation" id="module-navigation-bar">
+        <!-- Injected dynamically by game.js -->
+    </nav>
+
+    <!-- Main Laboratory Workspace -->
+    <main class="lab-container">
+        <!-- Pinned Formula HUD Card (Odciążenie pamięci roboczej) -->
+        <section class="pinned-hud-card" id="pinned-hud-card">
+            <div>
+                <div class="hud-title">Złota Reguła Modułu (Zawsze widoczna)</div>
+                <div class="hud-formula" id="hud-formula-display">
+                    <span class="math-radical">√a · √b = √(a · b)</span>
+                </div>
+            </div>
+            <div class="hud-helper-tip" id="hud-tip-display">
+                Pierwiastki tego samego stopnia mogą wejść pod jeden wspólny dach!
+            </div>
+        </section>
+
+        <!-- Alchemical Artifacts / Lifebuoy Bar (Koła Ratunkowe ADHD) -->
+        <section class="artifacts-bar" id="artifacts-bar">
+            <div class="artifacts-label">
+                <span>🛡️</span> <span>Koła Ratunkowe (Twoja magia ochronna):</span>
+            </div>
+            <div class="artifacts-row">
+                <button class="artifact-pill" id="artifact-eye" title="Legalna ściągawka: otwórz księgę wiedzy lub podpowiedź">
+                    <span class="art-icon">👁️</span>
+                    <span class="art-name">Oko Alchemika</span>
+                </button>
+                <button class="artifact-pill" id="artifact-swap" title="Bezpieczna wymiana: omiń ten składnik i weź inny">
+                    <span class="art-icon">🔄</span>
+                    <span class="art-name">Zamiana Składnika</span>
+                </button>
+                <button class="artifact-pill" id="artifact-coop" title="Kooperacja: poproś partnera o pomoc lub podpowiedź">
+                    <span class="art-icon">🤝</span>
+                    <span class="art-name">Sojusz Eliksirów</span>
+                </button>
+                <button class="artifact-pill" id="artifact-stone" title="Kamień Pomyłki: błędy zamieniają się w czystą esencję">
+                    <span class="art-icon">💎</span>
+                    <span class="art-name">Kamień Błędu</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Primary Interactive Workbench Card -->
+        <section class="workbench-card" id="workbench-card">
+            <div id="workbench-dynamic-content">
+                <!-- Dynamically populated by game.js -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Scaffolding Grimoire Drawer (Zasobnik wiedzy - 100% bezkarny dostęp) -->
+    <div class="grimoire-overlay" id="grimoire-overlay"></div>
+    <aside class="grimoire-drawer" id="grimoire-drawer">
+        <div class="grimoire-header">
+            <div class="grimoire-title">
+                <span>📖</span>
+                <span>Grimuar Alchemiczki</span>
+            </div>
+            <button class="grimoire-close-btn" id="btn-close-grimoire" title="Zamknij">✕</button>
+        </div>
+
+        <nav class="grimoire-tabs">
+            <button class="grimoire-tab active" data-target="tab-squares">Kwadraty (1²–15²)</button>
+            <button class="grimoire-tab" data-target="tab-cubes">Sześciany (1³–6³)</button>
+            <button class="grimoire-tab" data-target="tab-rules">Złote Prawa</button>
+            <button class="grimoire-tab" data-target="tab-factors">Rozbicia</button>
+        </nav>
+
+        <div class="grimoire-body">
+            <!-- TAB 1: SQUARES -->
+            <div class="grimoire-tab-content" id="tab-squares">
+                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.8rem;">
+                    Dotknij dowolnego kafelka, aby przywołać jego pierwiastek!
+                </p>
+                <div class="squares-grid-helper" id="grimoire-squares-grid">
+                    <!-- Injected dynamically -->
+                </div>
+            </div>
+
+            <!-- TAB 2: CUBES -->
+            <div class="grimoire-tab-content" id="tab-cubes" style="display: none;">
+                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.8rem;">
+                    Liczby sześcienne (potęga 3.):
+                </p>
+                <div class="squares-grid-helper">
+                    <div class="square-card-helper"><div class="sq-formula">1³ = 1·1·1</div><div class="sq-result" style="color: var(--rose-soft);">1</div></div>
+                    <div class="square-card-helper"><div class="sq-formula">2³ = 2·2·2</div><div class="sq-result" style="color: var(--rose-soft);">8</div></div>
+                    <div class="square-card-helper"><div class="sq-formula">3³ = 3·3·3</div><div class="sq-result" style="color: var(--rose-soft);">27</div></div>
+                    <div class="square-card-helper"><div class="sq-formula">4³ = 4·4·4</div><div class="sq-result" style="color: var(--rose-soft);">64</div></div>
+                    <div class="square-card-helper"><div class="sq-formula">5³ = 5·5·5</div><div class="sq-result" style="color: var(--rose-soft);">125</div></div>
+                    <div class="square-card-helper"><div class="sq-formula">6³ = 6·6·6</div><div class="sq-result" style="color: var(--rose-soft);">216</div></div>
+                </div>
+            </div>
+
+            <!-- TAB 3: RULES -->
+            <div class="grimoire-tab-content" id="tab-rules" style="display: none;">
+                <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                    <div class="square-card-helper" style="text-align: left; padding: 0.8rem;">
+                        <strong style="color: var(--mint-soft);">Mnożenie pod jednym dachem:</strong>
+                        <div style="font-size: 1.1rem; color: #fff; margin-top: 0.2rem;">√a · √b = √(a · b)</div>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.2rem;">np. √2 · √8 = √16 = 4</div>
+                    </div>
+                    <div class="square-card-helper" style="text-align: left; padding: 0.8rem;">
+                        <strong style="color: var(--sky-soft);">Dzielenie pod jednym dachem:</strong>
+                        <div style="font-size: 1.1rem; color: #fff; margin-top: 0.2rem;">√a / √b = √(a / b)</div>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.2rem;">np. √50 / √2 = √25 = 5</div>
+                    </div>
+                    <div class="square-card-helper" style="text-align: left; padding: 0.8rem;">
+                        <strong style="color: var(--gold-soft);">Wyłączanie czynnika:</strong>
+                        <div style="font-size: 1.1rem; color: #fff; margin-top: 0.2rem;">√(a² · b) = a√b</div>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.2rem;">np. √12 = √(4 · 3) = 2√3</div>
+                    </div>
+                    <div class="square-card-helper" style="text-align: left; padding: 0.8rem;">
+                        <strong style="color: var(--rose-soft);">Dodawanie (Tylko jednakowe!):</strong>
+                        <div style="font-size: 1.1rem; color: #fff; margin-top: 0.2rem;">2√3 + 5√3 = 7√3</div>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.2rem;">Różne pierwiastki (np. √2 + √5) nie łączą się!</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: COMMON FACTOR DECOMPOSITIONS -->
+            <div class="grimoire-tab-content" id="tab-factors" style="display: none;">
+                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.8rem;">
+                    Najpopularniejsze liczby w zadaniach egzaminacyjnych:
+                </p>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <div class="square-card-helper" style="display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.9rem;">
+                        <span>√8 = √(4 · 2)</span> <strong style="color: var(--gold-soft);">2√2</strong>
+                    </div>
+                    <div class="square-card-helper" style="display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.9rem;">
+                        <span>√12 = √(4 · 3)</span> <strong style="color: var(--gold-soft);">2√3</strong>
+                    </div>
+                    <div class="square-card-helper" style="display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.9rem;">
+                        <span>√18 = √(9 · 2)</span> <strong style="color: var(--gold-soft);">3√2</strong>
+                    </div>
+                    <div class="square-card-helper" style="display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.9rem;">
+                        <span>√20 = √(4 · 5)</span> <strong style="color: var(--gold-soft);">2√5</strong>
+                    </div>
+                    <div class="square-card-helper" style="display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.9rem;">
+                        <span>√32 = √(16 · 2)</span> <strong style="color: var(--gold-soft);">4√2</strong>
+                    </div>
+                    <div class="square-card-helper" style="display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.9rem;">
+                        <span>√48 = √(16 · 3)</span> <strong style="color: var(--gold-soft);">4√3</strong>
+                    </div>
+                    <div class="square-card-helper" style="display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.9rem;">
+                        <span>√50 = √(25 · 2)</span> <strong style="color: var(--gold-soft);">5√2</strong>
+                    </div>
+                    <div class="square-card-helper" style="display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.9rem;">
+                        <span>√75 = √(25 · 3)</span> <strong style="color: var(--gold-soft);">5√3</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Friendly Familiar Encouragement -->
+            <div class="friendly-familiar-callout">
+                <span class="familiar-sprite">🦉</span>
+                <div class="familiar-text">
+                    <strong>Puchacz Mądrości:</strong> „Prawdziwa alchemiczka nie musi wkuwać wszystkiego na pamięć! Zaglądanie do Grimuaru to dowód sprytu, nie słabości.”
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Logic Scripts -->
+    <script src="audio.js?v=2"></script>
+    <script src="particles.js?v=2"></script>
+    <script src="game.js?v=2"></script>
+</body>
+</html>
