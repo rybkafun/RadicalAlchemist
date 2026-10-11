@@ -19,7 +19,8 @@ class RadicalAlchemistGame {
             G: { currentStep: 0, completed: false },
             H: { currentStep: 0, completed: false },
             I: { currentStep: 0, completed: false },
-            J: { currentStep: 0, completed: false }
+            J: { currentStep: 0, completed: false },
+            K: { currentStep: 0, completed: false }
         };
 
         // Module A Data (Intuition: Square area to side)
@@ -165,17 +166,18 @@ class RadicalAlchemistGame {
             }
         ];
 
-        // Advanced "Tajemnice" (E, F, G) - guided, step-by-step textbook tasks
         this.secretModules = this.buildSecretModules();
         Object.assign(this.secretModules, this.buildTask50Module());
         Object.assign(this.secretModules, this.buildTask51Module());
+        Object.assign(this.secretModules, this.buildTask53Module());
         this.secretState = {
             E: { mission: 0, step: 0, wrong: 0, locked: false, board: [] },
             F: { mission: 0, step: 0, wrong: 0, locked: false, board: [] },
             G: { mission: 0, step: 0, wrong: 0, locked: false, board: [] },
             H: { mission: 0, step: 0, wrong: 0, locked: false, board: [] },
             I: { mission: 0, step: 0, wrong: 0, locked: false, board: [] },
-            J: { mission: 0, step: 0, wrong: 0, locked: false, board: [] }
+            J: { mission: 0, step: 0, wrong: 0, locked: false, board: [] },
+            K: { mission: 0, step: 0, wrong: 0, locked: false, board: [] }
         };
 
         // State for active interactions
@@ -424,6 +426,9 @@ class RadicalAlchemistGame {
         } else if (this.currentModule === 'J') {
             hudFormula.innerHTML = `<span class="math-radical">a√b = √(a²·b)</span> &nbsp;|&nbsp; <span class="math-radical">√a · √b = √(a·b)</span> &nbsp;|&nbsp; <span class="math-radical">(a√b)² = a²·b</span>`;
             hudTip.textContent = "Aby porównać liczby, zapisz je w tej samej postaci: wszystko pod jednym pierwiastkiem albo wszystko uproszczone.";
+        } else if (this.currentModule === 'K') {
+            hudFormula.innerHTML = `<span class="math-radical">\\frac{a}{\\sqrt{b}} = \\frac{a \\cdot \\sqrt{b}}{\\sqrt{b} \\cdot \\sqrt{b}} = \\frac{a\\sqrt{b}}{b}</span> &nbsp;|&nbsp; <span class="math-radical">\\sqrt{b} \\cdot \\sqrt{b} = b</span>`;
+            hudTip.textContent = "Usuwanie pierwiastka z mianownika: pomnóż licznik i mianownik przez ten sam pierwiastek! W mianowniku zostaje zwykła liczba.";
         } else if (this.currentModule === 'I') {
             hudFormula.innerHTML = `<span class="math-radical">√a · √a = a</span> &nbsp;|&nbsp; <span class="math-radical">(a√b)² = a² · b</span>`;
             hudTip.textContent = "Ujednolic mianowniki, dodawaj jednakowe pierwiastki, a przy potęgowaniu podnoś do potęgi wszystko: liczbę i pierwiastek.";
@@ -447,7 +452,8 @@ class RadicalAlchemistGame {
             { id: 'G', name: 'Tajemnica III: Dwa Światy', shortName: '🌗 Dwa Światy', sub: 'Zadanie z zeszytu', icon: '🌗' },
             { id: 'H', name: 'Tajemnica IV: Księga Definicji', shortName: '📜 Definicje', sub: 'Pierwiastki √ i ∛ (s. 25)', icon: '📜' },
             { id: 'I', name: 'Tajemnica V: Zadanie 50', shortName: '✨ Zad. 50', sub: 'Zapisz w najprostszej postaci', icon: '✨' },
-            { id: 'J', name: 'Tajemnica VI: Zadanie 51', shortName: '🔗 Zad. 51', sub: 'Wskaż pary równych liczb', icon: '🔗' }
+            { id: 'J', name: 'Tajemnica VI: Zadanie 51', shortName: '🔗 Zad. 51', sub: 'Wskaż pary równych liczb', icon: '🔗' },
+            { id: 'K', name: 'Tajemnica VII: Zadanie 53', shortName: '🪄 Zad. 53', sub: 'Usuwanie pierwiastków z mianownika', icon: '🪄' }
         ];
 
         navContainer.innerHTML = '';
@@ -2582,6 +2588,200 @@ class RadicalAlchemistGame {
         };
     }
 
+    // TAJEMNICA VII: ZADANIE 53 - POZBĄDŹ SIĘ PIERWIASTKÓW Z MIANOWNIKA (a-c + Trening Mistrzowski)
+    buildTask53Module() {
+        return {
+            K: {
+                title: 'Tajemnica VII: Zadanie 53',
+                missions: [
+                    {
+                        tag: 'Zadanie 53a',
+                        problem: 'Przekształć wyrażenie tak, aby pozbyć się pierwiastka z mianownika: 1 / √3',
+                        resultLine: '1 / √3 = (1 · √3) / (√3 · √3) = √3 / 3',
+                        answerLabel: 'Odpowiedź a): √3/3',
+                        steps: [
+                            {
+                                q: 'Przez co mnożymy licznik i mianownik ułamka 1 / √3 ?',
+                                say: 'Chcemy pozbyć się pierwiastka z mianownika. Ponieważ √3 · √3 = 3, mnożymy górę i dół przez...',
+                                choices: ['√3', '3', '1'], correct: 0,
+                                hint: 'Mnożymy ułamek przez √3 / √3 (czyli przez 1). Wtedy na dole powstanie √3 · √3 = 3!',
+                                wrong: { 1: 'Mnożenie przez 3 nie usunie pierwiastka: 3 · √3 = 3√3. Potrzebujemy √3 · √3 = 3.', 2: 'Mnożenie przez 1 nic nie zmieni.' },
+                                ok: 'Świetnie! Mnożymy licznik i mianownik przez √3.',
+                                board: 'Rozszerzamy przez √3: (1 · √3) / (√3 · √3)'
+                            },
+                            {
+                                q: 'Ile wynosi mianownik po pomnożeniu: √3 · √3 = ?',
+                                say: 'Iloczyn dwóch takich samych pierwiastków kwadratowych daje liczbę podpierwiastkową.',
+                                choices: ['3', '9', '√6'], correct: 0,
+                                hint: '√3 · √3 = √(3 · 3) = √9 = 3. Pierwiastek znika!',
+                                wrong: { 1: '9 to 3 · 3. Tu mamy √9 = 3.', 2: 'Nie dodajemy liczb pod pierwiastkiem.' },
+                                ok: 'Tak! √3 · √3 = 3 – w mianowniku mamy już liczbę wymierną!',
+                                board: 'Mianownik: √3 · √3 = 3'
+                            },
+                            {
+                                q: 'Ile wynosi licznik po pomnożeniu: 1 · √3 = ?',
+                                say: 'Jedynka pomnożona przez dowolną liczbę to ta sama liczba.',
+                                choices: ['√3', '1', '3'], correct: 0,
+                                hint: '1 · √3 = √3.',
+                                wrong: { 1: 'Jedynka razy √3 to √3, a nie 1.', 2: 'Jedynka nie zmienia liczby na 3.' },
+                                ok: 'Dokładnie! W liczniku zostaje √3.',
+                                board: 'Licznik: 1 · √3 = √3'
+                            },
+                            {
+                                q: 'Zaznacz postać 1 / √3 po usunięciu pierwiastka z mianownika:',
+                                say: 'Z licznika √3 i mianownika 3 składamy gotowy ułamek.',
+                                choices: ['√3/3', '3/√3', '1/3'], correct: 0,
+                                hint: 'W liczniku jest √3, a w mianowniku 3: √3/3.',
+                                wrong: { 1: 'W tym ułamku pierwiastek wciąż jest w mianowniku!', 2: 'Nie zgub pierwiastka w liczniku!' },
+                                ok: 'Zadanie 53a rozwiązane: √3/3!',
+                                board: 'Odpowiedź a): 1/√3 = √3/3 ✔'
+                            }
+                        ]
+                    },
+                    {
+                        tag: 'Zadanie 53b',
+                        problem: 'Przekształć wyrażenie tak, aby pozbyć się pierwiastka z mianownika: 3 / √5',
+                        resultLine: '3 / √5 = (3 · √5) / (√5 · √5) = 3√5 / 5',
+                        answerLabel: 'Odpowiedź b): 3√5/5',
+                        steps: [
+                            {
+                                q: 'Przez co mnożymy licznik i mianownik ułamka 3 / √5 ?',
+                                say: 'W mianowniku mamy √5. Aby go uwolnić, mnożymy górę i dół przez...',
+                                choices: ['√5', '5', '3'], correct: 0,
+                                hint: 'Zawsze mnożymy przez ten pierwiastek, który jest na dole: √5.',
+                                wrong: { 1: 'Mnożenie przez 5 dałoby 5√5 na dole. Potrzebujemy √5 · √5 = 5.', 2: 'Trójka jest na górze – to nie ona nam przeszkadza.' },
+                                ok: 'Brawo! Mnożymy licznik i mianownik przez √5.',
+                                board: 'Rozszerzamy przez √5: (3 · √5) / (√5 · √5)'
+                            },
+                            {
+                                q: 'Ile wynosi mianownik: √5 · √5 = ?',
+                                say: 'Kwadrat pierwiastka uwalnia liczbę: (√5)² = ?',
+                                choices: ['5', '25', '√10'], correct: 0,
+                                hint: '√5 · √5 = 5.',
+                                wrong: { 1: '25 byłoby pod pierwiastkiem: √25 = 5.', 2: 'Nie dodajemy liczb pod pierwiastkami.' },
+                                ok: 'Super! Mianownik to 5.',
+                                board: 'Mianownik: √5 · √5 = 5'
+                            },
+                            {
+                                q: 'Ile wynosi licznik: 3 · √5 = ?',
+                                say: 'Mnożymy liczbę całkowitą przez pierwiastek.',
+                                choices: ['3√5', '√15', '15'], correct: 0,
+                                hint: '3 · √5 zapisujemy po prostu jako 3√5.',
+                                wrong: { 1: 'Trójki nie wrzucamy pod pierwiastek bez podnoszenia do kwadratu.', 2: '15 to 3 · 5, a tu mamy pierwiastek √5.' },
+                                ok: 'Tak! Licznik to 3√5.',
+                                board: 'Licznik: 3 · √5 = 3√5'
+                            },
+                            {
+                                q: 'Czy w ułamku 3√5 / 5 można skrócić 3 i 5?',
+                                say: 'Sprawdź, czy 3 i 5 mają wspólny dzielnik większy od 1.',
+                                choices: ['Nie, 3 i 5 nie mają wspólnego dzielnika', 'Tak, skracają się przez 3', 'Tak, skracają się przez 5'], correct: 0,
+                                hint: '3 dzieli się przez 1 i 3, a 5 przez 1 i 5. Nie da się ich skrócić!',
+                                wrong: { 1: '5 nie dzieli się przez 3.', 2: '3 nie dzieli się przez 5.' },
+                                ok: 'Świetnie! 3 i 5 nie mają wspólnego dzielnika – to już najprostsza postać.',
+                                board: '3 i 5 nie skracają się – ułamek jest w najprostszej postaci'
+                            },
+                            {
+                                q: 'Zaznacz ostateczną postać 3 / √5 bez pierwiastka w mianowniku:',
+                                say: 'Złóż licznik 3√5 i mianownik 5.',
+                                choices: ['3√5/5', '√15/5', '3/5'], correct: 0,
+                                hint: 'W liczniku 3√5, w mianowniku 5: 3√5/5.',
+                                wrong: { 1: 'Pod pierwiastkiem jest 5, a 3 stoi przed pierwiastkiem.', 2: 'Nie zapomnij o √5 w liczniku!' },
+                                ok: 'Zadanie 53b rozwiązane: 3√5/5!',
+                                board: 'Odpowiedź b): 3/√5 = 3√5/5 ✔'
+                            }
+                        ]
+                    },
+                    {
+                        tag: 'Zadanie 53c',
+                        problem: 'Przekształć wyrażenie tak, aby pozbyć się pierwiastka z mianownika: 5 / (2√7)',
+                        resultLine: '5 / (2√7) = (5 · √7) / (2√7 · √7) = 5√7 / (2 · 7) = 5√7 / 14',
+                        answerLabel: 'Odpowiedź c): 5√7/14',
+                        steps: [
+                            {
+                                q: 'W mianowniku jest 2√7. Przez co wystarczy pomnożyć licznik i mianownik?',
+                                say: 'Liczba 2 jest już wymierna! Przeszkadza nam tylko pierwiastek. Wystarczy więc pomnożyć przez...',
+                                choices: ['Tylko √7', 'Koniecznie przez 2√7', 'Przez 14'], correct: 0,
+                                hint: 'Dwójka na dole jest w porządku – pierwiastkiem jest tylko √7, więc wystarczy pomnożyć przez sam √7!',
+                                wrong: { 1: 'Przez 2√7 też by zadziałało, ale liczby byłyby dwa razy większe i trzeba by skracać. Sprytniej mnożyć przez sam √7!', 2: '14 to nie jest pierwiastek.' },
+                                ok: 'Sprytna alchemia! Wystarczy pomnożyć licznik i mianownik przez √7.',
+                                board: 'Mnożymy przez √7: (5 · √7) / (2 · √7 · √7)'
+                            },
+                            {
+                                q: 'Ile wynosi iloczyn w mianowniku: 2 · √7 · √7 = ?',
+                                say: 'Najpierw √7 · √7 = 7, a potem mnożymy przez 2: 2 · 7 = ?',
+                                choices: ['14', '28', '7'], correct: 0,
+                                hint: '√7 · √7 = 7, a 2 · 7 = 14.',
+                                wrong: { 1: '28 to 2 · 14. Tu mamy 2 · 7 = 14.', 2: 'Nie zapomnij pomnożyć przez 2 przed pierwiastkiem: 2 · 7 = 14.' },
+                                ok: 'Doskonale! Mianownik to 2 · 7 = 14.',
+                                board: 'Mianownik: 2 · 7 = 14'
+                            },
+                            {
+                                q: 'Ile wynosi licznik po pomnożeniu: 5 · √7 = ?',
+                                say: '5 razy pierwiastek z 7.',
+                                choices: ['5√7', '√35', '35'], correct: 0,
+                                hint: '5 · √7 = 5√7.',
+                                wrong: { 1: 'Nie mnożymy pod pierwiastkiem 5 · 7.', 2: 'Pierwiastek nie znika z licznika.' },
+                                ok: 'Tak! Licznik to 5√7.',
+                                board: 'Licznik: 5 · √7 = 5√7'
+                            },
+                            {
+                                q: 'Czy ułamek 5√7 / 14 można skrócić?',
+                                say: 'Sprawdź, czy 5 i 14 mają wspólny dzielnik (5 dzieli się tylko przez 1 i 5; 14 nie dzieli się przez 5).',
+                                choices: ['Nie, 5 i 14 nie dzielą się przez tę samą liczbę', 'Tak, skracają się przez 2', 'Tak, skracają się przez 7'], correct: 0,
+                                hint: '5 dzieli się tylko przez 5, ale 14 nie dzieli się przez 5 (14 = 2 · 7). Więc nie skracamy!',
+                                wrong: { 1: '5 nie dzieli się przez 2.', 2: '5 nie dzieli się przez 7.' },
+                                ok: 'Zgadza się! Liczby 5 i 14 są względnie pierwsze – to najprostsza postać.',
+                                board: '5 i 14 nie mają wspólnego dzielnika – brak skracania'
+                            },
+                            {
+                                q: 'Zaznacz ostateczną postać 5 / (2√7) :',
+                                say: 'Złóż licznik 5√7 i mianownik 14.',
+                                choices: ['5√7/14', '5√7/7', '√35/14'], correct: 0,
+                                hint: 'Licznik to 5√7, mianownik to 14: 5√7/14.',
+                                wrong: { 1: 'Zapomniałaś o pomnożeniu mianownika przez 2: 2 · 7 = 14.', 2: 'Licznik to 5√7, nie √35.' },
+                                ok: 'Zadanie 53c rozwiązane: 5√7/14!',
+                                board: 'Odpowiedź c): 5/(2√7) = 5√7/14 ✔'
+                            }
+                        ]
+                    },
+                    {
+                        tag: 'Trening Mistrzowski',
+                        problem: 'Usuń pierwiastek z mianownika i skróć ułamek: 6 / √3',
+                        resultLine: '6 / √3 = (6 · √3) / 3 = 6√3 / 3 = 2√3',
+                        answerLabel: 'Wynik treningu: 2√3',
+                        steps: [
+                            {
+                                q: 'Przez co mnożymy 6 / √3 ?',
+                                say: 'Mianownik to √3, więc mnożymy licznik i mianownik przez...',
+                                choices: ['√3', '6', '3'], correct: 0,
+                                hint: 'Mnożymy przez pierwiastek z mianownika: √3.',
+                                ok: 'Tak! Otrzymujemy (6 · √3) / 3 = 6√3 / 3.',
+                                board: 'Rozszerzamy przez √3: 6√3 / 3'
+                            },
+                            {
+                                q: 'Czy w ułamku 6√3 / 3 liczby 6 i 3 dają się skrócić?',
+                                say: 'Podziel liczby poza pierwiastkiem: 6 : 3 = ?',
+                                choices: ['Tak, 6 : 3 = 2, więc zostaje 2√3', 'Nie, ułamków z pierwiastkiem nie wolno skracać', 'Tak, zostaje sam pierwiastek √3'], correct: 0,
+                                hint: 'Liczby przed pierwiastkiem i w mianowniku można skracać! 6 : 3 = 2, więc 6√3/3 = 2√3.',
+                                wrong: { 1: 'Wolno skracać liczby wymierne na zewnątrz pierwiastka!', 2: '6 : 3 = 2, więc dwójka zostaje przed pierwiastkiem.' },
+                                ok: 'Genialnie! 6 : 3 = 2, a √3 zostaje – wynik to 2√3!',
+                                board: 'Skracamy 6 i 3 przez 3: 6√3 / 3 = 2√3'
+                            },
+                            {
+                                q: 'Zaznacz ostateczną, najprostszą postać 6 / √3 :',
+                                say: 'Wybierz uproszczony wynik z tablicy.',
+                                choices: ['2√3', '6√3/3', '√3/2'], correct: 0,
+                                hint: 'Po skróceniu otrzymaliśmy 2√3.',
+                                ok: 'Trening Mistrzowski ukończony: 2√3!',
+                                board: 'Odpowiedź treningu: 6/√3 = 2√3 ✔'
+                            }
+                        ]
+                    }
+                ]
+            }
+        };
+    }
+
     secretDiagramSVG(type, side = 6) {
         if (type !== 'twin-squares') return '';
         const lbl = 'fill="#FDE68A" font-size="13" font-weight="700" font-family="Outfit, sans-serif"';
@@ -2758,6 +2958,10 @@ class RadicalAlchemistGame {
                 this.showModuleSuccessModal('Tajemnica IV rozwiązana!', 'Znasz definicje √ i ∛. Czas na zadanie 50: upraszczanie wyrażeń!', () => this.loadModule('I'));
             } else if (modId === 'I') {
                 this.showModuleSuccessModal('Tajemnica V rozwiązana!', 'Upraszczasz wyrażenia z pierwiastkami. Czas na zadanie 51: szukanie par równych liczb!', () => this.loadModule('J'));
+            } else if (modId === 'J') {
+                this.showModuleSuccessModal('Tajemnica VI rozwiązana!', 'Pary liczb nie mają przed Tobą tajemnic! Czas na Zadanie 53: usuwanie pierwiastków z mianownika!', () => this.loadModule('K'));
+            } else if (modId === 'K') {
+                this.showModuleSuccessModal('Tajemnica VII rozwiązana!', 'Uwolniłaś wszystkie mianowniki od pierwiastków! Jesteś prawdziwą Arcymistrzynią Alchemii!', () => this.showGrandFinale());
             } else {
                 this.showGrandFinale();
             }

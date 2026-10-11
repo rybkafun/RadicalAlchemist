@@ -2137,3 +2137,280 @@ body {
     50% { transform: translateY(-10px) rotate(1.5deg); }
 }
 
+/* ==========================================================================
+   SECRET MODULES / TEXTBOOK EXERCISES (ZADANIA Z PODRĘCZNIKA & ZESZYTU)
+   ========================================================================== */
+.secret-hero {
+    margin-bottom: 1.2rem;
+}
+
+.secret-choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    justify-content: center;
+    margin: 1.2rem 0;
+    width: 100%;
+}
+
+.secret-choices.short {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+.secret-choice-btn {
+    background: linear-gradient(135deg, rgba(30, 32, 54, 0.95), rgba(42, 45, 78, 0.95));
+    border: 2px solid var(--border-glow);
+    border-radius: var(--radius-md);
+    color: #ffffff;
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-weight: 700;
+    padding: 0.9rem 1.6rem;
+    min-height: 52px;
+    cursor: pointer;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.secret-choice-btn:hover:not(:disabled) {
+    transform: translateY(-3px) scale(1.02);
+    border-color: var(--mint-glow);
+    box-shadow: 0 0 20px rgba(52, 211, 153, 0.45);
+    background: linear-gradient(135deg, rgba(38, 42, 70, 0.98), rgba(52, 56, 96, 0.98));
+}
+
+.secret-choice-btn:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+}
+
+.secret-choice-btn.correct {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.35), rgba(5, 150, 105, 0.55)) !important;
+    border-color: var(--mint-glow) !important;
+    box-shadow: 0 0 25px rgba(52, 211, 153, 0.8) !important;
+    color: #ffffff !important;
+    transform: scale(1.04);
+}
+
+.secret-choice-btn.dim {
+    opacity: 0.35;
+    filter: grayscale(0.6);
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+.secret-choice-btn.gentle-wobble {
+    animation: gentle-wobble 0.45s ease;
+}
+
+@keyframes gentle-wobble {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+}
+
+.secret-feedback {
+    min-height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0.75rem auto;
+    border-radius: var(--radius-md);
+    padding: 0.6rem 1.4rem;
+    max-width: 620px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.secret-feedback.good {
+    background: rgba(52, 211, 153, 0.18);
+    border: 1px solid var(--mint-glow);
+    color: var(--mint-soft);
+    box-shadow: 0 0 20px rgba(52, 211, 153, 0.25);
+}
+
+.secret-feedback.soft {
+    background: rgba(251, 191, 36, 0.15);
+    border: 1px solid var(--gold-glow);
+    color: var(--gold-soft);
+}
+
+.secret-hint-btn {
+    background: rgba(167, 139, 250, 0.15);
+    border: 1px solid var(--violet-glow);
+    color: var(--violet-soft);
+    border-radius: var(--radius-full);
+    padding: 0.55rem 1.3rem;
+    font-size: 0.92rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    margin: 0.5rem auto 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.secret-hint-btn:hover {
+    background: rgba(167, 139, 250, 0.3);
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(167, 139, 250, 0.4);
+}
+
+.secret-hint {
+    display: none;
+    background: rgba(30, 27, 75, 0.85);
+    border-left: 4px solid var(--gold-glow);
+    padding: 0.85rem 1.2rem;
+    border-radius: var(--radius-md);
+    margin: 0.8rem auto;
+    color: #FEF3C7;
+    font-size: 1.05rem;
+    line-height: 1.45;
+    max-width: 620px;
+    text-align: left;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+}
+
+.secret-hint.open {
+    display: block;
+    animation: scale-in-bounce 0.3s ease;
+}
+
+.secret-book-card {
+    background: rgba(18, 20, 38, 0.7);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 1.2rem 1.5rem;
+    margin: 1.4rem auto 0;
+    max-width: 650px;
+    text-align: left;
+}
+
+.secret-book-title {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--sky-soft);
+    font-weight: 800;
+    margin-bottom: 0.4rem;
+}
+
+.secret-book-problem {
+    font-size: 1.15rem;
+    color: #ffffff;
+    font-weight: 600;
+    font-family: var(--font-heading);
+    line-height: 1.4;
+}
+
+.secret-diagram {
+    display: block;
+    margin: 0.8rem auto 0;
+    max-width: 100%;
+    height: auto;
+}
+
+.secret-board {
+    background: rgba(15, 17, 30, 0.85);
+    border: 2px dashed rgba(251, 191, 36, 0.45);
+    border-radius: var(--radius-lg);
+    padding: 1.2rem 1.5rem;
+    margin: 1.4rem auto 0;
+    max-width: 650px;
+    text-align: left;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.secret-board-title {
+    color: var(--gold-soft);
+    font-weight: 800;
+    font-size: 0.92rem;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 0.6rem;
+}
+
+.secret-board-line {
+    color: #E2E8F0;
+    font-size: 1.05rem;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-family: var(--font-heading);
+    letter-spacing: 0.3px;
+}
+
+.secret-board-empty {
+    color: var(--text-secondary);
+    font-style: italic;
+    font-size: 0.95rem;
+}
+
+.secret-done-card {
+    background: linear-gradient(135deg, rgba(28, 31, 55, 0.98), rgba(44, 38, 72, 0.98));
+    border: 3px solid var(--gold-glow);
+    border-radius: var(--radius-lg);
+    padding: 2.2rem;
+    text-align: center;
+    box-shadow: 0 0 50px rgba(251, 191, 36, 0.35);
+    max-width: 640px;
+    margin: 1rem auto;
+}
+
+.secret-done-trophy {
+    font-size: 4rem;
+    margin-bottom: 0.5rem;
+    animation: bounce-small 1.2s infinite alternate;
+}
+
+.secret-done-title {
+    font-family: var(--font-heading);
+    font-size: 2.2rem;
+    color: var(--gold-soft);
+    font-weight: 900;
+    margin-bottom: 0.4rem;
+}
+
+.secret-done-line {
+    font-size: 1.15rem;
+    color: var(--mint-soft);
+    margin-bottom: 0.5rem;
+}
+
+.secret-done-answer {
+    font-size: 1.3rem;
+    color: #ffffff;
+    font-weight: 800;
+    background: rgba(0, 0, 0, 0.35);
+    padding: 0.65rem 1.4rem;
+    border-radius: var(--radius-md);
+    display: inline-block;
+    margin: 0.8rem 0 1.4rem;
+    border: 1px solid var(--border-glow);
+}
+
+@media (max-width: 600px) {
+    .secret-choice-btn {
+        font-size: 1.05rem;
+        padding: 0.75rem 1.1rem;
+        min-height: 48px;
+    }
+    .secret-choices.short {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+    }
+    .secret-done-card {
+        padding: 1.4rem 1rem;
+    }
+}
+
