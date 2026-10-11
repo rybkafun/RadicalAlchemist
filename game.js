@@ -20,7 +20,8 @@ class RadicalAlchemistGame {
             H: { currentStep: 0, completed: false },
             I: { currentStep: 0, completed: false },
             J: { currentStep: 0, completed: false },
-            K: { currentStep: 0, completed: false }
+            K: { currentStep: 0, completed: false },
+            L: { currentStep: 0, completed: false }
         };
 
         // Module A Data (Intuition: Square area to side)
@@ -169,6 +170,7 @@ class RadicalAlchemistGame {
         this.secretModules = this.buildSecretModules();
         Object.assign(this.secretModules, this.buildTask50Module());
         Object.assign(this.secretModules, this.buildTask51Module());
+        Object.assign(this.secretModules, this.buildTask52Module());
         Object.assign(this.secretModules, this.buildTask53Module());
         this.secretState = {
             E: { mission: 0, step: 0, wrong: 0, locked: false, board: [] },
@@ -177,7 +179,8 @@ class RadicalAlchemistGame {
             H: { mission: 0, step: 0, wrong: 0, locked: false, board: [] },
             I: { mission: 0, step: 0, wrong: 0, locked: false, board: [] },
             J: { mission: 0, step: 0, wrong: 0, locked: false, board: [] },
-            K: { mission: 0, step: 0, wrong: 0, locked: false, board: [] }
+            K: { mission: 0, step: 0, wrong: 0, locked: false, board: [] },
+            L: { mission: 0, step: 0, wrong: 0, locked: false, board: [] }
         };
 
         // State for active interactions
@@ -427,6 +430,9 @@ class RadicalAlchemistGame {
             hudFormula.innerHTML = `<span class="math-radical">a√b = √(a²·b)</span> &nbsp;|&nbsp; <span class="math-radical">√a · √b = √(a·b)</span> &nbsp;|&nbsp; <span class="math-radical">(a√b)² = a²·b</span>`;
             hudTip.textContent = "Aby porównać liczby, zapisz je w tej samej postaci: wszystko pod jednym pierwiastkiem albo wszystko uproszczone.";
         } else if (this.currentModule === 'K') {
+            hudFormula.innerHTML = `<span class="math-radical">√(a²·b) = a√b</span> &nbsp;|&nbsp; <span class="math-radical">∛(a³·b) = a∛b</span> &nbsp;|&nbsp; <span class="math-radical">∛(-a) = -∛a</span>`;
+            hudTip.textContent = "Zadanie 52: najpierw wyłącz czynnik przed pierwiastek (szukaj kwadratów: 4, 9, 16... lub sześcianów: 8, 27...), a potem wykonaj działanie!";
+        } else if (this.currentModule === 'L') {
             hudFormula.innerHTML = `<span class="math-radical">\\frac{a}{\\sqrt{b}} = \\frac{a \\cdot \\sqrt{b}}{\\sqrt{b} \\cdot \\sqrt{b}} = \\frac{a\\sqrt{b}}{b}</span> &nbsp;|&nbsp; <span class="math-radical">\\sqrt{b} \\cdot \\sqrt{b} = b</span>`;
             hudTip.textContent = "Usuwanie pierwiastka z mianownika: pomnóż licznik i mianownik przez ten sam pierwiastek! W mianowniku zostaje zwykła liczba.";
         } else if (this.currentModule === 'I') {
@@ -453,7 +459,8 @@ class RadicalAlchemistGame {
             { id: 'H', name: 'Tajemnica IV: Księga Definicji', shortName: '📜 Definicje', sub: 'Pierwiastki √ i ∛ (s. 25)', icon: '📜' },
             { id: 'I', name: 'Tajemnica V: Zadanie 50', shortName: '✨ Zad. 50', sub: 'Zapisz w najprostszej postaci', icon: '✨' },
             { id: 'J', name: 'Tajemnica VI: Zadanie 51', shortName: '🔗 Zad. 51', sub: 'Wskaż pary równych liczb', icon: '🔗' },
-            { id: 'K', name: 'Tajemnica VII: Zadanie 53', shortName: '🪄 Zad. 53', sub: 'Usuwanie pierwiastków z mianownika', icon: '🪄' }
+            { id: 'K', name: 'Tajemnica VII: Zadanie 52', shortName: '💎 Zad. 52', sub: 'Wyłącz czynnik i oblicz', icon: '💎' },
+            { id: 'L', name: 'Tajemnica VIII: Zadanie 53', shortName: '🪄 Zad. 53', sub: 'Usuwanie pierwiastków z mianownika', icon: '🪄' }
         ];
 
         navContainer.innerHTML = '';
@@ -2588,11 +2595,230 @@ class RadicalAlchemistGame {
         };
     }
 
-    // TAJEMNICA VII: ZADANIE 53 - POZBĄDŹ SIĘ PIERWIASTKÓW Z MIANOWNIKA (a-c + Trening Mistrzowski)
-    buildTask53Module() {
+    // TAJEMNICA VII: ZADANIE 52 - WYŁĄCZ CZYNNIK PRZED ZNAK PIERWIASTKA I OBLICZ (a-f)
+    buildTask52Module() {
         return {
             K: {
-                title: 'Tajemnica VII: Zadanie 53',
+                title: 'Tajemnica VII: Zadanie 52',
+                missions: [
+                    {
+                        tag: 'Zadanie 52a',
+                        problem: 'Wyłącz czynnik przed znak pierwiastka i oblicz: √5 · √8',
+                        resultLine: '√5 · √8 = √5 · 2√2 = 2 · √(5 · 2) = 2√10',
+                        answerLabel: 'Odpowiedź a): 2√10',
+                        steps: [
+                            {
+                                q: 'Jak wyłączyć czynnik z √8 ?',
+                                say: 'Rozbij liczbę 8 na iloczyn z kwadratem: 8 = 4 · 2. Ile wynosi √8?',
+                                choices: ['2√2', '4√2', '2√4'], correct: 0,
+                                hint: '√8 = √(4 · 2) = √4 · √2 = 2√2.',
+                                wrong: { 1: 'Przed pierwiastek wychodzi √4 = 2, a nie 4.', 2: '√4 to 2 – czwórka już nie zostaje pod pierwiastkiem.' },
+                                ok: 'Tak! √8 = 2√2.',
+                                board: '√8 = √(4 · 2) = 2√2'
+                            },
+                            {
+                                q: 'Podstaw 2√2 i pomnóż: √5 · 2√2 = ?',
+                                say: 'Dwójka stoi przed pierwiastkiem, a pod pierwiastkiem mnożymy 5 · 2: 2 · √(5 · 2) = ?',
+                                choices: ['2√10', '√20', '10√2'], correct: 0,
+                                hint: '2 · √(5 · 2) = 2√10.',
+                                wrong: { 1: '√20 to też poprawna wartość, ale polecenie wymaga wyłączenia czynnika.', 2: '10 powstało z 5 · 2, więc 10 jest pod pierwiastkiem.' },
+                                ok: 'Świetnie! 2 · √(5 · 2) = 2√10.',
+                                board: '√5 · 2√2 = 2 · √(5 · 2) = 2√10'
+                            },
+                            {
+                                q: 'Zaznacz ostateczny wynik obliczenia √5 · √8 :',
+                                say: 'Wybierz obliczony wynik z tablicy.',
+                                choices: ['2√10', '√40', '4√5'], correct: 0,
+                                hint: 'Na tablicy masz 2√10.',
+                                ok: 'Zadanie 52a rozwiązane: 2√10!',
+                                board: 'Odpowiedź a): √5 · √8 = 2√10 ✔'
+                            }
+                        ]
+                    },
+                    {
+                        tag: 'Zadanie 52b',
+                        problem: 'Wyłącz czynnik przed znak pierwiastka i oblicz: 3√2 · 2√8 · √3',
+                        resultLine: '3√2 · 2√8 · √3 = 3√2 · 4√2 · √3 = (12 · 2) · √3 = 24√3',
+                        answerLabel: 'Odpowiedź b): 24√3',
+                        steps: [
+                            {
+                                q: 'Ile wynosi 2√8 po wyłączeniu czynnika?',
+                                say: 'Skoro √8 = 2√2, to 2√8 = 2 · 2√2 = ?',
+                                choices: ['4√2', '2√2', '8√2'], correct: 0,
+                                hint: '2 · 2√2 = 4√2.',
+                                wrong: { 1: '2√2 to sam √8, a przed nim stoi jeszcze 2.', 2: '2 · 2 = 4, nie 8.' },
+                                ok: 'Brawo! 2√8 = 4√2.',
+                                board: '2√8 = 2 · 2√2 = 4√2'
+                            },
+                            {
+                                q: 'Ile wynosi iloczyn: 3√2 · 4√2 = ?',
+                                say: 'Mnożymy liczby: 3 · 4 = 12, oraz pierwiastki: √2 · √2 = 2. Razem: 12 · 2 = ?',
+                                choices: ['24', '12√2', '48'], correct: 0,
+                                hint: '3 · 4 = 12, a √2 · √2 = 2. Więc 12 · 2 = 24!',
+                                wrong: { 1: '√2 · √2 = 2, więc pierwiastek znika: 12 · 2 = 24.', 2: '48 to 24 · 2.' },
+                                ok: 'Idealnie! 3√2 · 4√2 = 24.',
+                                board: '3√2 · 4√2 = 12 · 2 = 24'
+                            },
+                            {
+                                q: 'Domnóż ostatni składnik: 24 · √3 = ?',
+                                say: 'Został jeszcze do domnożenia pierwiastek √3.',
+                                choices: ['24√3', '√72', '72'], correct: 0,
+                                hint: '24 · √3 = 24√3.',
+                                ok: 'Zadanie 52b rozwiązane: 24√3!',
+                                board: 'Odpowiedź b): 3√2 · 2√8 · √3 = 24√3 ✔'
+                            }
+                        ]
+                    },
+                    {
+                        tag: 'Zadanie 52c',
+                        problem: 'Wyłącz czynnik przed znak pierwiastka i oblicz: 7√2 · 0,1√12',
+                        resultLine: '7√2 · 0,1√12 = 7√2 · 0,2√3 = (7 · 0,2) · (√2 · √3) = 1,4√6',
+                        answerLabel: 'Odpowiedź c): 1,4√6',
+                        steps: [
+                            {
+                                q: 'Jak wyłączyć czynnik z √12 ?',
+                                say: '12 = 4 · 3. Ile wynosi √12?',
+                                choices: ['2√3', '3√2', '4√3'], correct: 0,
+                                hint: '√12 = √(4 · 3) = 2√3.',
+                                wrong: { 1: '3√2 to √18, nie √12.', 2: '√4 to 2, nie 4.' },
+                                ok: 'Tak! √12 = 2√3.',
+                                board: '√12 = √(4 · 3) = 2√3'
+                            },
+                            {
+                                q: 'Ile wynosi 0,1 · 2√3 ?',
+                                say: 'Mnożymy liczbę dziesiętną przez współczynnik: 0,1 · 2 = ?',
+                                choices: ['0,2√3', '2√3', '0,12√3'], correct: 0,
+                                hint: '0,1 · 2 = 0,2, więc 0,2√3.',
+                                wrong: { 1: '0,1 · 2 = 0,2, a nie 2.', 2: '0,1 · 2 to 0,2, a nie 0,12.' },
+                                ok: 'Świetnie! 0,1√12 = 0,2√3.',
+                                board: '0,1√12 = 0,1 · 2√3 = 0,2√3'
+                            },
+                            {
+                                q: 'Ile wynosi iloczyn: 7√2 · 0,2√3 ?',
+                                say: 'Mnożymy współczynniki: 7 · 0,2 = 1,4. Mnożymy pierwiastki: √2 · √3 = √6.',
+                                choices: ['1,4√6', '14√6', '0,14√6'], correct: 0,
+                                hint: '7 · 0,2 = 1,4, a √2 · √3 = √6, czyli 1,4√6.',
+                                wrong: { 1: '7 · 0,2 to 1,4, nie 14.', 2: '7 · 0,2 to 1,4, nie 0,14.' },
+                                ok: 'Zadanie 52c rozwiązane: 1,4√6!',
+                                board: 'Odpowiedź c): 7√2 · 0,1√12 = 1,4√6 ✔'
+                            }
+                        ]
+                    },
+                    {
+                        tag: 'Zadanie 52d',
+                        problem: 'Wyłącz czynnik przed znak pierwiastka i oblicz: ∛16 + ∛2',
+                        resultLine: '∛16 + ∛2 = ∛(8 · 2) + ∛2 = 2∛2 + 1∛2 = 3∛2',
+                        answerLabel: 'Odpowiedź d): 3∛2',
+                        steps: [
+                            {
+                                q: 'Jaki sześcian (1³=1, 2³=8, 3³=27) kryje się w liczbie 16?',
+                                say: 'Rozłóż 16 na sześcian i resztę: 16 = ?',
+                                choices: ['8 · 2', '4 · 4', '16 · 1'], correct: 0,
+                                hint: '2³ = 8, a 16 = 8 · 2. Sześcian to 8!',
+                                wrong: { 1: '4 to kwadrat (2²), a mamy pierwiastek sześcienny stopnia 3, więc szukamy sześcianu (8).', 2: '16 nie jest sześcianem żadnej liczby całkowitej.' },
+                                ok: 'Znakomicie! 16 = 8 · 2, a 8 = 2³.',
+                                board: '16 = 8 · 2  (bo 8 = 2³)'
+                            },
+                            {
+                                q: 'Ile wynosi ∛16 po wyłączeniu czynnika?',
+                                say: '∛16 = ∛(8 · 2) = ∛8 · ∛2 = ?',
+                                choices: ['2∛2', '4∛2', '8∛2'], correct: 0,
+                                hint: '∛8 = 2, więc 2∛2.',
+                                wrong: { 1: '4 to √16 (kwadratowy), a my liczymy sześcienny: ∛8 = 2.', 2: '8 to liczba pod pierwiastkiem, wyciągamy ∛8 = 2.' },
+                                ok: 'Dokładnie! ∛16 = 2∛2.',
+                                board: '∛16 = ∛(8 · 2) = 2∛2'
+                            },
+                            {
+                                q: 'Dodaj: 2∛2 + ∛2 = ?',
+                                say: 'Pamiętaj: ∛2 to 1∛2. Dodajemy współczynniki z przodu: 2 + 1 = ?',
+                                choices: ['3∛2', '2∛4', '∛18'], correct: 0,
+                                hint: '2∛2 + 1∛2 = 3∛2.',
+                                wrong: { 1: 'Liczb pod pierwiastkiem nie dodajemy – dodajemy tylko liczby z przodu!', 2: 'Nie dodajemy liczb pod pierwiastkiem (16 + 2).' },
+                                ok: 'Zadanie 52d rozwiązane: 3∛2!',
+                                board: 'Odpowiedź d): ∛16 + ∛2 = 2∛2 + 1∛2 = 3∛2 ✔'
+                            }
+                        ]
+                    },
+                    {
+                        tag: 'Zadanie 52e',
+                        problem: 'Wyłącz czynnik przed znak pierwiastka i oblicz: 2∛24 − 2∛3',
+                        resultLine: '2∛24 − 2∛3 = 2 · 2∛3 − 2∛3 = 4∛3 − 2∛3 = 2∛3',
+                        answerLabel: 'Odpowiedź e): 2∛3',
+                        steps: [
+                            {
+                                q: 'Jak wyłączyć czynnik z ∛24 ?',
+                                say: 'Szukamy sześcianu w 24: 24 = 8 · 3. Ile wynosi ∛24?',
+                                choices: ['2∛3', '3∛2', '4∛3'], correct: 0,
+                                hint: '∛24 = ∛(8 · 3) = ∛8 · ∛3 = 2∛3.',
+                                wrong: { 1: 'Pod pierwiastkiem zostaje 3, a ∛8 = 2 wychodzi na zewnątrz.', 2: '∛8 to 2, nie 4.' },
+                                ok: 'Tak! ∛24 = 2∛3.',
+                                board: '∛24 = ∛(8 · 3) = 2∛3'
+                            },
+                            {
+                                q: 'Ile wynosi 2∛24 po wstawieniu 2∛3 ?',
+                                say: 'Mnożymy: 2 · 2∛3 = ?',
+                                choices: ['4∛3', '2∛3', '8∛3'], correct: 0,
+                                hint: '2 · 2 = 4, więc 4∛3.',
+                                wrong: { 1: 'Nie zapomnij pomnożyć przez dwójkę z przodu: 2 · 2 = 4.', 2: '2 · 2 = 4, a nie 8.' },
+                                ok: 'Super! 2∛24 = 4∛3.',
+                                board: '2∛24 = 2 · 2∛3 = 4∛3'
+                            },
+                            {
+                                q: 'Odejmij: 4∛3 − 2∛3 = ?',
+                                say: 'Odejmujemy współczynniki z przodu: 4 − 2 = ?',
+                                choices: ['2∛3', '2', '0'], correct: 0,
+                                hint: '(4 − 2)∛3 = 2∛3.',
+                                wrong: { 1: 'Pierwiastek ∛3 nie znika!', 2: '4 − 2 to 2, nie 0.' },
+                                ok: 'Zadanie 52e rozwiązane: 2∛3!',
+                                board: 'Odpowiedź e): 2∛24 − 2∛3 = 4∛3 − 2∛3 = 2∛3 ✔'
+                            }
+                        ]
+                    },
+                    {
+                        tag: 'Zadanie 52f',
+                        problem: 'Wyłącz czynnik przed znak pierwiastka i oblicz: −∛81 − ∛(−3)',
+                        resultLine: '−∛81 − ∛(−3) = −3∛3 − (−∛3) = −3∛3 + ∛3 = −2∛3',
+                        answerLabel: 'Odpowiedź f): −2∛3',
+                        steps: [
+                            {
+                                q: 'Jaki sześcian dzieli liczbę 81? (1³=1, 2³=8, 3³=27)',
+                                say: '81 = 27 · 3. Ponieważ ∛27 = 3, ile wynosi −∛81?',
+                                choices: ['−3∛3', '−9∛3', '3∛3'], correct: 0,
+                                hint: '∛81 = ∛(27 · 3) = 3∛3, więc z minusem mamy −3∛3.',
+                                wrong: { 1: '9 to √81 (kwadratowy), a tu mamy sześcienny ∛27 = 3.', 2: 'Na początku wyrażenia stoi znak minus: −∛81.' },
+                                ok: 'Znakomicie! −∛81 = −3∛3.',
+                                board: '−∛81 = −∛(27 · 3) = −3∛3'
+                            },
+                            {
+                                q: 'Jak uprościć wyrażenie: − ∛(−3) ?',
+                                say: 'Z pierwiastka nieparzystego minus można wyciągnąć: ∛(−3) = −∛3. Minus przed minusem to...',
+                                choices: ['+ ∛3 (dwa minusy dają plus)', '− ∛3', '0'], correct: 0,
+                                hint: '− ∛(−3) = − (−∛3) = + ∛3!',
+                                wrong: { 1: 'Minus przed nawiasem zmienia znak: −(−x) = +x.', 2: 'Wyrażenie nie znika.' },
+                                ok: 'Alchemiczna reguła znaków! − ∛(−3) = + ∛3.',
+                                board: '− ∛(−3) = − (−∛3) = + ∛3'
+                            },
+                            {
+                                q: 'Oblicz sumę: −3∛3 + ∛3 = ?',
+                                say: 'Pamiętaj: + ∛3 to + 1∛3. Ile wynosi −3 + 1 ?',
+                                choices: ['−2∛3', '−4∛3', '2∛3'], correct: 0,
+                                hint: '−3 + 1 = −2, więc −2∛3.',
+                                wrong: { 1: '−3 + 1 to −2, a nie −4 (dodajemy 1, a nie odejmujemy).', 2: 'Dług −3 powiększony o 1 daje −2 (wynik ujemny).' },
+                                ok: 'Brawo! Całe Zadanie 52 rozwiązane: −2∛3!',
+                                board: 'Odpowiedź f): −3∛3 + ∛3 = −2∛3 ✔'
+                            }
+                        ]
+                    }
+                ]
+            }
+        };
+    }
+
+    // TAJEMNICA VIII: ZADANIE 53 - POZBĄDŹ SIĘ PIERWIASTKÓW Z MIANOWNIKA (a-c + Trening Mistrzowski)
+    buildTask53Module() {
+        return {
+            L: {
+                title: 'Tajemnica VIII: Zadanie 53',
                 missions: [
                     {
                         tag: 'Zadanie 53a',
@@ -2959,9 +3185,11 @@ class RadicalAlchemistGame {
             } else if (modId === 'I') {
                 this.showModuleSuccessModal('Tajemnica V rozwiązana!', 'Upraszczasz wyrażenia z pierwiastkami. Czas na zadanie 51: szukanie par równych liczb!', () => this.loadModule('J'));
             } else if (modId === 'J') {
-                this.showModuleSuccessModal('Tajemnica VI rozwiązana!', 'Pary liczb nie mają przed Tobą tajemnic! Czas na Zadanie 53: usuwanie pierwiastków z mianownika!', () => this.loadModule('K'));
+                this.showModuleSuccessModal('Tajemnica VI rozwiązana!', 'Pary liczb nie mają przed Tobą tajemnic! Czas na Zadanie 52: wyłącz czynnik i oblicz!', () => this.loadModule('K'));
             } else if (modId === 'K') {
-                this.showModuleSuccessModal('Tajemnica VII rozwiązana!', 'Uwolniłaś wszystkie mianowniki od pierwiastków! Jesteś prawdziwą Arcymistrzynią Alchemii!', () => this.showGrandFinale());
+                this.showModuleSuccessModal('Tajemnica VII rozwiązana!', 'Świetnie radzisz sobie z wyłączaniem czynnika i pierwiastkami sześciennymi! Czas na Zadanie 53: usuwanie pierwiastków z mianownika!', () => this.loadModule('L'));
+            } else if (modId === 'L') {
+                this.showModuleSuccessModal('Tajemnica VIII rozwiązana!', 'Uwolniłaś wszystkie mianowniki od pierwiastków! Jesteś prawdziwą Arcymistrzynią Alchemii!', () => this.showGrandFinale());
             } else {
                 this.showGrandFinale();
             }
