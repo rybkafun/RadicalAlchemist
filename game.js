@@ -17,7 +17,8 @@ class RadicalAlchemistGame {
             E: { currentStep: 0, completed: false },
             F: { currentStep: 0, completed: false },
             G: { currentStep: 0, completed: false },
-            H: { currentStep: 0, completed: false }
+            H: { currentStep: 0, completed: false },
+            I: { currentStep: 0, completed: false }
         };
 
         // Module A Data (Intuition: Square area to side)
@@ -165,11 +166,13 @@ class RadicalAlchemistGame {
 
         // Advanced "Tajemnice" (E, F, G) - guided, step-by-step textbook tasks
         this.secretModules = this.buildSecretModules();
+        Object.assign(this.secretModules, this.buildTask50Module());
         this.secretState = {
             E: { mission: 0, step: 0, wrong: 0, locked: false, board: [] },
             F: { mission: 0, step: 0, wrong: 0, locked: false, board: [] },
             G: { mission: 0, step: 0, wrong: 0, locked: false, board: [] },
-            H: { mission: 0, step: 0, wrong: 0, locked: false, board: [] }
+            H: { mission: 0, step: 0, wrong: 0, locked: false, board: [] },
+            I: { mission: 0, step: 0, wrong: 0, locked: false, board: [] }
         };
 
         // State for active interactions
@@ -415,6 +418,9 @@ class RadicalAlchemistGame {
         } else if (this.currentModule === 'G') {
             hudFormula.innerHTML = `<span class="math-radical">∛(a³·b) = a∛b</span> &nbsp;|&nbsp; <span class="math-radical">√(a²·b) = a√b</span>`;
             hudTip.textContent = "Sześciany: 8, 27, 64. Kwadraty: 4, 9, 16, 25. Różnych pierwiastków nie dodajemy.";
+        } else if (this.currentModule === 'I') {
+            hudFormula.innerHTML = `<span class="math-radical">√a · √a = a</span> &nbsp;|&nbsp; <span class="math-radical">(a√b)² = a² · b</span>`;
+            hudTip.textContent = "Ujednolic mianowniki, dodawaj jednakowe pierwiastki, a przy potęgowaniu podnoś do potęgi wszystko: liczbę i pierwiastek.";
         } else if (this.currentModule === 'H') {
             hudFormula.innerHTML = `<span class="math-radical">√a = b, gdy b² = a i b ≥ 0</span> &nbsp;|&nbsp; <span class="math-radical">∛a = b, gdy b³ = a</span>`;
             hudTip.textContent = "√ tylko z liczb nieujemnych (wynik ≥ 0). ∛ można liczyć z KAŻDEJ liczby, także ujemnej!";
@@ -433,7 +439,8 @@ class RadicalAlchemistGame {
             { id: 'E', name: 'Tajemnica I: Bliźniacze Kwadraty', shortName: '🔲 Bliźniaki', sub: 'Zadanie z zeszytu', icon: '🔲' },
             { id: 'F', name: 'Tajemnica II: Zgodne Kryształy', shortName: '🧪 Kryształy', sub: 'Zadania z zeszytu', icon: '🧪' },
             { id: 'G', name: 'Tajemnica III: Dwa Światy', shortName: '🌗 Dwa Światy', sub: 'Zadanie z zeszytu', icon: '🌗' },
-            { id: 'H', name: 'Tajemnica IV: Księga Definicji', shortName: '📜 Definicje', sub: 'Pierwiastki √ i ∛ (s. 25)', icon: '📜' }
+            { id: 'H', name: 'Tajemnica IV: Księga Definicji', shortName: '📜 Definicje', sub: 'Pierwiastki √ i ∛ (s. 25)', icon: '📜' },
+            { id: 'I', name: 'Tajemnica V: Zadanie 50', shortName: '✨ Zad. 50', sub: 'Zapisz w najprostszej postaci', icon: '✨' }
         ];
 
         navContainer.innerHTML = '';
@@ -2215,6 +2222,234 @@ class RadicalAlchemistGame {
         };
     }
 
+    // TAJEMNICA V: ZADANIE 50 - ZAPISZ W JAK NAJPROSTSZEJ POSTACI (a-f)
+    buildTask50Module() {
+        return {
+            I: {
+                title: 'Tajemnica V: Zadanie 50',
+                missions: [
+                    {
+                        tag: 'Zadanie 50a',
+                        problem: 'Zapisz w jak najprostszej postaci: (½√5) / 6',
+                        resultLine: '(½√5) : 6 = √5 · ½ · ⅙ = √5/12',
+                        answerLabel: 'Odpowiedź a): √5/12',
+                        steps: [
+                            {
+                                q: 'Ile wynosi ½ : 6 ?',
+                                say: 'Dzielenie przez 6 to mnożenie przez ⅙. Więc ½ : 6 = ½ · ⅙ = ?',
+                                choices: ['1/12', '3', '1/3'], correct: 0,
+                                hint: 'Pomnóż liczniki: 1 · 1 = 1, i mianowniki: 2 · 6 = 12.',
+                                wrong: { 1: '½ · 6 = 3, ale my dzielimy, nie mnożymy przez 6.', 2: '1/3 to ½ · ⅔. Dzielimy przez 6, czyli mnożymy przez ⅙.' },
+                                ok: 'Tak! ½ : 6 = 1/12.',
+                                board: '½ : 6 = ½ · ⅙ = 1/12'
+                            },
+                            {
+                                q: 'Co dzieje się z √5 przy dzieleniu przez 6?',
+                                say: 'Dzielimy tylko liczbę przed pierwiastkiem. Pierwiastek √5 zostaje taki sam.',
+                                choices: ['Zostaje √5', 'Zmienia się w √30', 'Znika'], correct: 0,
+                                hint: 'Pod pierwiastkiem nic nie liczymy – dzielimy tylko współczynnik 1/2.',
+                                wrong: { 1: '√30 powstałoby przy mnożeniu pod pierwiastkiem, a my tylko dzielimy współczynnik.', 2: '√5 nie jest liczbą, którą można skrócić – zostaje.' },
+                                ok: 'Dokładnie! √5 zostaje.',
+                                board: 'Pierwiastek √5 zostaje bez zmian'
+                            },
+                            {
+                                q: 'Zaznacz najprostszą postać (½√5) / 6:',
+                                say: 'Z ½ : 6 = 1/12 i √5 składamy wynik.',
+                                choices: ['√5/12', '12√5', '√5/3'], correct: 0,
+                                hint: '1/12 · √5 = √5/12.',
+                                ok: 'Zadanie 50a rozwiązane: √5/12!',
+                                board: 'Odpowiedź a): √5/12 ✔'
+                            }
+                        ]
+                    },
+                    {
+                        tag: 'Zadanie 50b',
+                        problem: 'Zapisz w jak najprostszej postaci: √5/2 + 2√5/3',
+                        resultLine: '√5/2 + 2√5/3 = 3√5/6 + 4√5/6 = 7√5/6',
+                        answerLabel: 'Odpowiedź b): 7√5/6',
+                        steps: [
+                            {
+                                q: 'Jaki wspólny mianownik mają ułamki z mianownikami 2 i 3?',
+                                say: 'Oba ułamki mają √5 – możemy je dodać, ale najpierw wspólny mianownik.',
+                                choices: ['5', '6', '8'], correct: 1,
+                                hint: 'Najmniejsza liczba, którą dzieli i 2, i 3, to 6.',
+                                wrong: { 0: '5 nie dzieli się przez 2 ani przez 3.', 2: '8 nie dzieli się przez 3.' },
+                                ok: 'Tak! Wspólny mianownik to 6.',
+                                board: 'Wspólny mianownik: 6'
+                            },
+                            {
+                                q: 'Rozszerz √5/2 do mianownika 6.',
+                                say: 'Mnożymy licznik i mianownik przez 3: √5/2 = (3 · √5)/(3 · 2) = ?',
+                                choices: ['3√5/6', '√5/6', '2√5/6'], correct: 0,
+                                hint: '2 · 3 = 6, więc licznik też razy 3.',
+                                wrong: { 1: 'Licznik też trzeba pomnożyć przez 3, inaczej zmieni się wartość.', 2: '2√5/6 to byłoby rozszerzenie przez 2, a mianownik 2 potrzebuje 3.' },
+                                ok: 'Super! √5/2 = 3√5/6.',
+                                board: '√5/2 = 3√5/6'
+                            },
+                            {
+                                q: 'Rozszerz 2√5/3 do mianownika 6.',
+                                say: 'Mnożymy licznik i mianownik przez 2: (2 · 2√5)/(2 · 3) = ?',
+                                choices: ['2√5/6', '4√5/6', '6√5/6'], correct: 1,
+                                hint: '2 · 2√5 = 4√5, a 3 · 2 = 6.',
+                                wrong: { 0: 'Licznik też mnożymy przez 2: 2 · 2 = 4.', 2: '6√5/6 to byłoby mnożenie przez 3, a tu potrzebujemy 2.' },
+                                ok: 'Dobrze! 2√5/3 = 4√5/6.',
+                                board: '2√5/3 = 4√5/6'
+                            },
+                            {
+                                q: 'Dodaj: 3√5/6 + 4√5/6 = ?',
+                                say: 'Mianownik taki sam, pierwiastki jednakowe – dodajemy liczby przed √5: 3 + 4.',
+                                choices: ['7√5/6', '7√5/12', '12√5/6'], correct: 0,
+                                hint: '3 + 4 = 7. Mianownik 6 zostaje.',
+                                wrong: { 1: 'Mianownika nie dodajemy – zostaje 6.', 2: 'Dodajemy (3 + 4), a nie mnożymy.' },
+                                ok: 'Zadanie 50b rozwiązane: 7√5/6!',
+                                board: 'Odpowiedź b): 7√5/6 ✔'
+                            }
+                        ]
+                    },
+                    {
+                        tag: 'Zadanie 50c',
+                        problem: 'Zapisz w jak najprostszej postaci: 3√6 + √6/4',
+                        resultLine: '3√6 + √6/4 = 12√6/4 + √6/4 = 13√6/4',
+                        answerLabel: 'Odpowiedź c): 13√6/4',
+                        steps: [
+                            {
+                                q: 'Zapisz 3√6 jako ułamek z mianownikiem 4.',
+                                say: 'Mnożymy licznik i mianownik przez 4: 3√6 = (4 · 3√6)/4 = ?',
+                                choices: ['12√6/4', '3√6/4', '7√6/4'], correct: 0,
+                                hint: '4 · 3 = 12. Pierwiastek √6 zostaje.',
+                                wrong: { 1: '3√6/4 to ¼ z 3√6, a nie ta sama liczba.', 2: '7 to 3 + 4. Tu mnożymy: 4 · 3.' },
+                                ok: 'Tak! 3√6 = 12√6/4.',
+                                board: '3√6 = 12√6/4'
+                            },
+                            {
+                                q: 'Dodaj: 12√6/4 + √6/4 = ?',
+                                say: 'Pamiętaj: √6 to to samo co 1√6. Dodajemy 12 + 1.',
+                                choices: ['13√6/4', '13√6/8', '12√6/4'], correct: 0,
+                                hint: '12 + 1 = 13, mianownik 4 zostaje.',
+                                wrong: { 1: 'Mianownik zostaje 4 – nie dodajemy mianowników.', 2: 'Nie zapomnij dodać jednego √6: 12 + 1.' },
+                                ok: 'Super! 13√6/4.',
+                                board: '12√6/4 + √6/4 = 13√6/4'
+                            },
+                            {
+                                q: 'Zaznacz najprostszą postać 3√6 + √6/4:',
+                                say: 'Wynik masz na tablicy.',
+                                choices: ['13√6/4', '4√6/4', '3√6/4'], correct: 0,
+                                hint: 'Na tablicy wyszło 13√6/4.',
+                                ok: 'Zadanie 50c rozwiązane: 13√6/4!',
+                                board: 'Odpowiedź c): 13√6/4 ✔'
+                            }
+                        ]
+                    },
+                    {
+                        tag: 'Zadanie 50d',
+                        problem: 'Zapisz w jak najprostszej postaci: (3√5/2)²',
+                        resultLine: '(3√5/2)² = (9 · 5)/4 = 45/4',
+                        answerLabel: 'Odpowiedź d): 45/4',
+                        steps: [
+                            {
+                                q: 'Ile wynosi (√5)² ?',
+                                say: 'Kwadrat pierwiastka z liczby daje tę liczbę: (√a)² = a.',
+                                choices: ['5', '25', '√10'], correct: 0,
+                                hint: '√5 · √5 = √25 = 5.',
+                                wrong: { 1: '25 to 5². Tutaj podnosimy √5, nie 5.', 2: '√10 to byłoby √5 · √2.' },
+                                ok: 'Tak! (√5)² = 5.',
+                                board: '(√5)² = 5'
+                            },
+                            {
+                                q: 'Ile wynosi (3√5)² ?',
+                                say: 'Podnosimy do kwadratu obie części: 3² · (√5)² = 9 · 5 = ?',
+                                choices: ['45', '15', '9√5'], correct: 0,
+                                hint: '9 · 5 = 45.',
+                                wrong: { 1: 'Liczbę 3 też podnosimy do kwadratu: 3² = 9, a nie 3.', 2: '√5 zniknie po podniesieniu do kwadratu, zostanie 5.' },
+                                ok: 'Super! (3√5)² = 45.',
+                                board: '(3√5)² = 9 · 5 = 45'
+                            },
+                            {
+                                q: 'Zaznacz najprostszą postać (3√5/2)²:',
+                                say: 'Mianownik też podnosimy do kwadratu: 2² = 4.',
+                                choices: ['45/4', '45/2', '15/4'], correct: 0,
+                                hint: 'Licznik 45, mianownik 2² = 4.',
+                                wrong: { 1: 'Mianownik też podnosimy do kwadratu: 2² = 4.', 2: '15 powstałoby ze złego policzenia licznika. Licznik to 45.' },
+                                ok: 'Zadanie 50d rozwiązane: 45/4!',
+                                board: 'Odpowiedź d): 45/4 ✔'
+                            }
+                        ]
+                    },
+                    {
+                        tag: 'Zadanie 50e',
+                        problem: 'Zapisz w jak najprostszej postaci: (−½√3)²',
+                        resultLine: '(−½√3)² = ¼ · 3 = 3/4',
+                        answerLabel: 'Odpowiedź e): 3/4',
+                        steps: [
+                            {
+                                q: 'Jaki znak ma wynik (−½√3)² ?',
+                                say: 'Kwadrat to liczba razy ona sama: minus razy minus daje...',
+                                choices: ['Dodatni', 'Ujemny', 'Zero'], correct: 0,
+                                hint: '(−2) · (−2) = 4. Kwadrat nigdy nie jest ujemny.',
+                                wrong: { 1: 'Minus razy minus to plus.', 2: 'Zero wychodzi tylko z zera.' },
+                                ok: 'Tak! Wynik jest dodatni.',
+                                board: '(−½√3)² > 0, minus znika'
+                            },
+                            {
+                                q: 'Ile wynosi (½)² · (√3)² ?',
+                                say: '(½)² = ¼, a (√3)² = 3. Więc ¼ · 3 = ?',
+                                choices: ['3/4', '3/2', '√3/4'], correct: 0,
+                                hint: '¼ · 3 = 3/4.',
+                                wrong: { 1: '(½)² to ¼, a nie ½.', 2: '√3 znika po podniesieniu do kwadratu: (√3)² = 3.' },
+                                ok: 'Super! ¼ · 3 = 3/4.',
+                                board: '(½)² · (√3)² = ¼ · 3 = 3/4'
+                            },
+                            {
+                                q: 'Zaznacz najprostszą postać (−½√3)²:',
+                                say: 'Wynik masz na tablicy.',
+                                choices: ['−3/4', '3/4', '3/2'], correct: 1,
+                                hint: 'Na tablicy wyszło 3/4.',
+                                wrong: { 0: 'Kwadrat jest dodatni, więc bez minusa.' },
+                                ok: 'Zadanie 50e rozwiązane: 3/4!',
+                                board: 'Odpowiedź e): 3/4 ✔'
+                            }
+                        ]
+                    },
+                    {
+                        tag: 'Zadanie 50f',
+                        problem: 'Zapisz w jak najprostszej postaci: (√2/2)³',
+                        resultLine: '(√2/2)³ = (2√2)/8 = √2/4',
+                        answerLabel: 'Odpowiedź f): √2/4',
+                        steps: [
+                            {
+                                q: 'Ile wynosi (√2)³ ?',
+                                say: '(√2)³ = √2 · √2 · √2 = 2 · √2 = ?',
+                                choices: ['2√2', '√6', '2'], correct: 0,
+                                hint: '√2 · √2 = 2, a jeszcze zostało jedno √2.',
+                                wrong: { 1: '√6 to √2 · √3. Tu mnożymy trzy razy √2.', 2: 'Zostało jeszcze jedno √2 do pomnożenia.' },
+                                ok: 'Tak! (√2)³ = 2√2.',
+                                board: '(√2)³ = 2√2'
+                            },
+                            {
+                                q: 'Ile wynosi 2³ ?',
+                                say: 'Mianownik też podnosimy do sześcianu: 2 · 2 · 2 = ?',
+                                choices: ['8', '6', '4'], correct: 0,
+                                hint: '2 · 2 = 4, a 4 · 2 = 8.',
+                                wrong: { 1: '6 to 2 · 3. Sześcian to 2 · 2 · 2.', 2: '4 to 2². Sześcian to jeszcze jedno mnożenie.' },
+                                ok: 'Super! 2³ = 8.',
+                                board: '2³ = 8'
+                            },
+                            {
+                                q: 'Skróć 2√2 / 8 do najprostszej postaci.',
+                                say: 'Dzielimy 2 i 8 przez 2: 2√2/8 = 1√2/4.',
+                                choices: ['√2/4', '√2/8', '√2/2'], correct: 0,
+                                hint: '2 : 2 = 1, a 8 : 2 = 4.',
+                                wrong: { 1: 'Mianownik też dzielimy przez 2: 8 : 2 = 4.', 2: '8 : 2 to 4, a nie 2.' },
+                                ok: 'Zadanie 50f rozwiązane: √2/4!',
+                                board: 'Odpowiedź f): √2/4 ✔'
+                            }
+                        ]
+                    }
+                ]
+            }
+        };
+    }
+
     secretDiagramSVG(type, side = 6) {
         if (type !== 'twin-squares') return '';
         const lbl = 'fill="#FDE68A" font-size="13" font-weight="700" font-family="Outfit, sans-serif"';
@@ -2386,7 +2621,9 @@ class RadicalAlchemistGame {
             } else if (modId === 'F') {
                 this.showModuleSuccessModal('Tajemnica II rozwiązana!', 'Upraszczasz pierwiastki i dodajesz jednakowe kryształy. Czekają kolejne Tajemnice!', () => this.loadModule('G'));
             } else if (modId === 'G') {
-                this.showModuleSuccessModal('Tajemnica III rozwiązana!', 'Rozróżniasz ∛ i √! Została ostatnia Tajemnica: Księga Definicji.', () => this.loadModule('H'));
+                this.showModuleSuccessModal('Tajemnica III rozwiązana!', 'Rozróżniasz ∛ i √! Czeka Księga Definicji.', () => this.loadModule('H'));
+            } else if (modId === 'H') {
+                this.showModuleSuccessModal('Tajemnica IV rozwiązana!', 'Znasz definicje √ i ∛. Czas na zadanie 50: upraszczanie wyrażeń!', () => this.loadModule('I'));
             } else {
                 this.showGrandFinale();
             }
