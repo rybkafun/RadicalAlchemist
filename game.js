@@ -13,7 +13,10 @@ class RadicalAlchemistGame {
             A: { currentStep: 0, completed: false },
             B: { currentStep: 0, completed: false },
             C: { currentStep: 0, completed: false },
-            D: { currentStep: 0, completed: false }
+            D: { currentStep: 0, completed: false },
+            E: { currentStep: 0, completed: false },
+            F: { currentStep: 0, completed: false },
+            G: { currentStep: 0, completed: false }
         };
 
         // Module A Data (Intuition: Square area to side)
@@ -159,6 +162,14 @@ class RadicalAlchemistGame {
             }
         ];
 
+        // Advanced "Tajemnice" (E, F, G) - guided, step-by-step textbook tasks
+        this.secretModules = this.buildSecretModules();
+        this.secretState = {
+            E: { mission: 0, step: 0, wrong: 0, locked: false, board: [] },
+            F: { mission: 0, step: 0, wrong: 0, locked: false, board: [] },
+            G: { mission: 0, step: 0, wrong: 0, locked: false, board: [] }
+        };
+
         // State for active interactions
         this.moduleA_currentSide = 3;
         this.moduleA_xray = true;
@@ -280,6 +291,17 @@ class RadicalAlchemistGame {
         }
 
         const mod = this.currentModule;
+
+        // Secret missions are never skipped - the swap artifact opens the hint instead
+        if (this.secretModules[mod]) {
+            const hintBox = document.getElementById('secret-hint');
+            if (hintBox) hintBox.classList.add('open');
+            if (window.AlchemistParticles) {
+                window.AlchemistParticles.runeFloat(event.clientX, event.clientY, '🔄 Zamiana: pokazuję Ci podpowiedź!');
+            }
+            return;
+        }
+
         const maxSteps = mod === 'A' ? this.moduleA_challenges.length :
                          mod === 'B' ? this.moduleB_challenges.length :
                          mod === 'C' ? this.moduleC_challenges.length :
@@ -382,6 +404,15 @@ class RadicalAlchemistGame {
         } else if (this.currentModule === 'D') {
             hudFormula.innerHTML = `<span class="math-radical">a√x + b√x = (a+b)√x</span> &nbsp;|&nbsp; <span class="math-radical">∛(a·b) = ∛a · ∛b</span>`;
             hudTip.textContent = "Dodajemy tylko jednakowe pierwiastki. Pierwiastek sześcienny szuka sześcianu (a·a·a).";
+        } else if (this.currentModule === 'E') {
+            hudFormula.innerHTML = `<span class="math-radical">Pole = bok²</span> &nbsp;|&nbsp; <span class="math-radical">√(a·b) = √a · √b</span>`;
+            hudTip.textContent = "Z pola kwadratu wyliczysz bok: bok = √pole.";
+        } else if (this.currentModule === 'F') {
+            hudFormula.innerHTML = `<span class="math-radical">√(a²·b) = a√b</span> &nbsp;|&nbsp; <span class="math-radical">a√x + b√x = (a+b)√x</span>`;
+            hudTip.textContent = "Najpierw uprość pierwiastki, potem dodawaj jednakowe.";
+        } else if (this.currentModule === 'G') {
+            hudFormula.innerHTML = `<span class="math-radical">∛(a³·b) = a∛b</span> &nbsp;|&nbsp; <span class="math-radical">√(a²·b) = a√b</span>`;
+            hudTip.textContent = "Sześciany: 8, 27, 64. Kwadraty: 4, 9, 16, 25. Różnych pierwiastków nie dodajemy.";
         }
     }
 
@@ -393,7 +424,10 @@ class RadicalAlchemistGame {
             { id: 'A', name: 'Moduł A: Intuicja', shortName: '📐 Kwadrat', sub: 'Geometria Kwadratu', icon: '📐' },
             { id: 'B', name: 'Moduł B: Kociołek Działań', shortName: '⚗️ Kociołek', sub: 'Mnożenie i Dzielenie', icon: '⚗️' },
             { id: 'C', name: 'Moduł C: Rozbijanie Kamienia', shortName: '💎 Kamień', sub: 'Wyłączanie Czynnika', icon: '💎' },
-            { id: 'D', name: 'Moduł D: Abstrakcja i Sześcian', shortName: '🔮 Sześcian', sub: 'Dodawanie i ∛x', icon: '🔮' }
+            { id: 'D', name: 'Moduł D: Abstrakcja i Sześcian', shortName: '🔮 Sześcian', sub: 'Dodawanie i ∛x', icon: '🔮' },
+            { id: 'E', name: 'Tajemnica I: Bliźniacze Kwadraty', shortName: '🔲 Bliźniaki', sub: 'Zadanie z zeszytu', icon: '🔲' },
+            { id: 'F', name: 'Tajemnica II: Zgodne Kryształy', shortName: '🧪 Kryształy', sub: 'Zadania z zeszytu', icon: '🧪' },
+            { id: 'G', name: 'Tajemnica III: Dwa Światy', shortName: '🌗 Dwa Światy', sub: 'Zadanie z zeszytu', icon: '🌗' }
         ];
 
         navContainer.innerHTML = '';
@@ -425,6 +459,13 @@ class RadicalAlchemistGame {
             this.renderModuleC(stage);
         } else if (modId === 'D') {
             this.renderModuleD(stage);
+        } else if (this.secretModules[modId]) {
+            if (this.progress[modId].completed) {
+                // Re-entering a finished mystery starts it fresh
+                this.progress[modId].completed = false;
+                this.secretState[modId] = { mission: 0, step: 0, wrong: 0, locked: false, board: [] };
+            }
+            this.renderSecretModule(stage, modId);
         }
     }
 
@@ -1345,8 +1386,422 @@ class RadicalAlchemistGame {
             this.renderModuleD(document.getElementById('workbench-dynamic-content'));
         } else {
             this.progress.D.completed = true;
-            this.showGrandFinale();
+            this.showModuleSuccessModal('Moduł D Ukończony!', 'Teraz czas na prawdziwe wyzwania! Czekają na Ciebie 3 Tajemnice – zadania z Twojego zeszytu. Poprowadzę Cię przez nie krok po kroku, bez pośpiechu.', () => {
+                this.loadModule('E');
+            });
         }
+    }
+
+    // =========================================================================
+    // TAJEMNICE E, F, G: ZADANIA Z ZESZYTU - KROK PO KROKU (ADHD-friendly)
+    // One tiny decision per screen, visible question, hint always free,
+    // wrong answers never cost anything, finished steps pile up on a "board".
+    // =========================================================================
+    buildSecretModules() {
+        return {
+            E: {
+                title: 'Tajemnica I: Bliźniacze Kwadratury',
+                missions: [
+                    {
+                        tag: 'Zadanie 1',
+                        problem: 'Kwadrat ABCD ma pole dwa razy większe od pola kwadratu EFGH. Jaką długość ma bok mniejszego kwadratu?',
+                        diagram: 'twin-squares',
+                        resultLine: 'Bok mniejszego kwadratu: √18 = √9 · √2 = 3√2',
+                        answerLabel: 'Odpowiedź C: 3√2',
+                        steps: [
+                            {
+                                q: 'Ile wynosi pole DUŻEGO kwadratu ABCD?',
+                                say: 'Bok ABCD = 6. Pole kwadratu = bok · bok.',
+                                choices: ['12', '36', '24'], correct: 1,
+                                hint: 'Pole = 6 · 6. Policz: sześć razy sześć.',
+                                ok: 'Tak! 6 · 6 = 36.',
+                                board: 'Pole ABCD = 6 · 6 = 36'
+                            },
+                            {
+                                q: 'Ile wynosi pole MAŁEGO kwadratu EFGH?',
+                                say: 'Pole ABCD jest 2 razy większe, więc pole EFGH = 36 : 2.',
+                                choices: ['72', '18', '34'], correct: 1,
+                                hint: '"2 razy większe" znaczy, że mały ma połowę pola dużego. Połowa z 36 to...?',
+                                wrong: { 0: '72 to 36 · 2. Mały kwadrat jest MNIEJSZY, więc dzielimy, nie mnożymy.' },
+                                ok: 'Super! Pole EFGH = 18.',
+                                board: 'Pole EFGH = 36 : 2 = 18'
+                            },
+                            {
+                                q: 'Jak rozbić 18, żeby wyciągnąć kwadrat?',
+                                say: 'Bok = √pole = √18 (jak w Module A). Szukamy kwadratu: 4, 9, 16... który dzieli 18.',
+                                choices: ['4 · 4,5', '9 · 2', '6 · 3'], correct: 1,
+                                hint: 'Kwadraty to 1, 4, 9, 16... Który z nich mieści się w 18 równo? 9 · 2 = 18.',
+                                wrong: { 0: '4,5 nie jest liczbą całkowitą – wygodniej rozbić tak, by wszystko było całkowite.', 2: 'Ani 6, ani 3 nie jest kwadratem. Szukamy 4, 9, 16...' },
+                                ok: 'Dokładnie! 18 = 9 · 2.',
+                                board: 'bok = √18 = √(9 · 2)'
+                            },
+                            {
+                                q: 'Ile to jest √9 · √2 ?',
+                                say: '√18 = √(9 · 2) = √9 · √2 = ? · √2',
+                                choices: ['9√2', '3√2', '2√3'], correct: 1,
+                                hint: '√9 to liczba, która razy siebie daje 9. To 3!',
+                                wrong: { 0: '√9 to nie 9. Pierwiastek z 9 to 3, bo 3 · 3 = 9.' },
+                                ok: 'Pięknie! √9 = 3, więc √18 = 3√2.',
+                                board: '√18 = √9 · √2 = 3√2'
+                            },
+                            {
+                                q: 'Zaznacz odpowiedź z zeszytu: jaką długość ma bok mniejszego kwadratu?',
+                                say: 'Wynik masz już na tablicy powyżej. Wybierz pasującą literę!',
+                                choices: ['A. 3', 'B. 4', 'C. 3√2', 'D. 2√3'], correct: 2,
+                                hint: 'Na tablicy mamy: bok = 3√2.',
+                                wrong: { 3: 'Prawie! 2√3 to coś innego niż 3√2. Zobacz, co stoi przed pierwiastkiem.' },
+                                ok: 'Zadanie 1 rozwiązane: C!',
+                                board: 'Odpowiedź: C. 3√2 ✔'
+                            }
+                        ]
+                    }
+                ]
+            },
+            F: {
+                title: 'Tajemnica II: Zgodne Kryształy',
+                missions: [
+                    {
+                        tag: 'Zadanie 2',
+                        problem: 'Liczbę 3√8 + 2√2 można zapisać w postaci:',
+                        resultLine: '3√8 + 2√2 = 6√2 + 2√2 = 8√2',
+                        answerLabel: 'Odpowiedź B: 8√2',
+                        steps: [
+                            {
+                                q: 'Zacznij od √8. Jak go rozbić?',
+                                say: 'Pierwiastki √8 i √2 są różne, więc najpierw uprościmy √8. Szukamy kwadratu w liczbie 8.',
+                                choices: ['8 · 1', '4 · 2', '2 · 3'], correct: 1,
+                                hint: 'Kwadrat 4 mieści się w 8: 4 · 2 = 8.',
+                                wrong: { 0: '8 · 1 = 8 to prawda, ale nic nie wyciągniemy. Szukamy kwadratu: 4 albo 9.', 2: '2 · 3 = 6, a nie 8. Sprawdź mnożenie.' },
+                                ok: 'Tak! 8 = 4 · 2.',
+                                board: '√8 = √(4 · 2)'
+                            },
+                            {
+                                q: 'Ile wynosi √8 po uproszczeniu?',
+                                say: '√8 = √4 · √2 = ? · √2',
+                                choices: ['4√2', '2√2', '8√2'], correct: 1,
+                                hint: '√4 = 2, bo 2 · 2 = 4.',
+                                wrong: { 0: '√4 to 2, nie 4. Sprawdź: 2 · 2 = 4.' },
+                                ok: 'Brawo! √8 = 2√2.',
+                                board: '√8 = 2√2'
+                            },
+                            {
+                                q: 'Ile wynosi 3√8 ?',
+                                say: 'Wstawiamy: 3√8 = 3 · 2√2 = ?',
+                                choices: ['6√2', '5√2', '3√2'], correct: 0,
+                                hint: 'Pomnóż liczby przed pierwiastkiem: 3 · 2.',
+                                wrong: { 1: 'Przy mnożeniu 3 · 2 = 6, a nie 5 (to byłoby dodawanie).' },
+                                ok: 'Świetnie! 3√8 = 6√2.',
+                                board: '3√8 = 3 · 2√2 = 6√2'
+                            },
+                            {
+                                q: 'Teraz dodaj: 6√2 + 2√2 = ?',
+                                say: 'Pierwiastki są jednakowe (√2)! Dodajemy tylko liczby przed nimi – jak 6 jabłek + 2 jabłka.',
+                                choices: ['12√2', '8√4', '8√2'], correct: 2,
+                                hint: '6 + 2 = 8, a √2 zostaje bez zmian.',
+                                wrong: { 0: 'Dodajemy (6 + 2), nie mnożymy.', 1: 'Pierwiastek √2 zostaje taki sam – nie zmieniamy liczby pod pierwiastkiem.' },
+                                ok: 'Tak! 6√2 + 2√2 = 8√2.',
+                                board: '6√2 + 2√2 = 8√2'
+                            },
+                            {
+                                q: 'Zaznacz odpowiedź z zeszytu: 3√8 + 2√2 można zapisać w postaci:',
+                                say: 'Wynik masz na tablicy. Znajdź go wśród liter!',
+                                choices: ['A. 5√10', 'B. 8√2', 'C. 7√2', 'D. 14√2'], correct: 1,
+                                hint: 'Na tablicy wyszło 8√2.',
+                                ok: 'Zadanie 2 rozwiązane: B!',
+                                board: 'Odpowiedź: B. 8√2 ✔'
+                            }
+                        ]
+                    },
+                    {
+                        tag: 'Zadanie 3',
+                        problem: 'Jeżeli 5√180 = a√5, to liczba a jest równa:',
+                        resultLine: '5√180 = 5 · 6√5 = 30√5, więc a = 30',
+                        answerLabel: 'Odpowiedź B: 30',
+                        steps: [
+                            {
+                                q: 'Rozbij 180 tak, żeby zostało √5.',
+                                say: 'Chcemy dostać √5, więc szukamy: 180 = (kwadrat) · 5.',
+                                choices: ['4 · 45', '36 · 5', '9 · 20'], correct: 1,
+                                hint: '36 · 5 = 180, a 36 = 6 · 6 jest kwadratem. I zostaje dokładnie 5!',
+                                wrong: { 0: '4 · 45 = 180, ale zostaje √45, a my chcemy √5.', 2: '9 · 20 = 180, ale zostaje √20, a my chcemy √5.' },
+                                ok: 'Tak! 180 = 36 · 5.',
+                                board: '√180 = √(36 · 5)'
+                            },
+                            {
+                                q: 'Ile to jest √36 · √5 ?',
+                                say: '√180 = √36 · √5 = ? · √5',
+                                choices: ['6√5', '36√5', '18√5'], correct: 0,
+                                hint: '√36 to 6, bo 6 · 6 = 36.',
+                                wrong: { 1: '√36 to 6, nie 36. Sprawdź: 6 · 6 = 36.' },
+                                ok: 'Brawo! √180 = 6√5.',
+                                board: '√180 = 6√5'
+                            },
+                            {
+                                q: 'Ile wynosi 5√180 ?',
+                                say: 'Wstawiamy: 5√180 = 5 · 6√5 = ?',
+                                choices: ['11√5', '30√5', '180√5'], correct: 1,
+                                hint: 'Pomnóż liczby przed pierwiastkiem: 5 · 6.',
+                                wrong: { 0: 'Mnożymy 5 · 6, a nie dodajemy.' },
+                                ok: 'Świetnie! 5√180 = 30√5.',
+                                board: '5√180 = 5 · 6√5 = 30√5'
+                            },
+                            {
+                                q: 'Porównaj: 30√5 = a√5. Ile wynosi a ?',
+                                say: 'Po obu stronach jest √5, więc liczby przed pierwiastkiem muszą być równe.',
+                                choices: ['5', '30', '6'], correct: 1,
+                                hint: 'Z jednej strony 30√5, z drugiej a√5. Zatem a = 30.',
+                                ok: 'Tak! a = 30.',
+                                board: '30√5 = a√5  ➔  a = 30'
+                            },
+                            {
+                                q: 'Zaznacz odpowiedź z zeszytu: liczba a jest równa:',
+                                say: 'Wynik masz na tablicy. Znajdź go wśród liter!',
+                                choices: ['A. 180', 'B. 30', 'C. 9', 'D. 6'], correct: 1,
+                                hint: 'Na tablicy wyszło a = 30.',
+                                ok: 'Zadanie 3 rozwiązane: B!',
+                                board: 'Odpowiedź: B. 30 ✔'
+                            }
+                        ]
+                    }
+                ]
+            },
+            G: {
+                title: 'Tajemnica III: Dwa Światy',
+                missions: [
+                    {
+                        tag: 'Zadanie 4',
+                        problem: 'Sumę ∛54 + √150 można zapisać w postaci:',
+                        resultLine: '∛54 + √150 = 3∛2 + 5√6',
+                        answerLabel: 'Odpowiedź A: 3∛2 + 5√6',
+                        steps: [
+                            {
+                                q: 'Zacznij od ∛54. Rozbij 54 na sześcian · resztę.',
+                                say: 'To pierwiastek 3. stopnia, więc szukamy SZEŚCIANU: 8, 27, 64...',
+                                choices: ['9 · 6', '27 · 2', '18 · 3'], correct: 1,
+                                hint: '27 = 3 · 3 · 3 to sześcian, a 27 · 2 = 54.',
+                                wrong: { 0: '9 jest kwadratem, a przy ∛ potrzebny jest sześcian (8, 27, 64).', 2: '18 nie jest sześcianem. Sześciany to 8, 27, 64...' },
+                                ok: 'Tak! 54 = 27 · 2.',
+                                board: '∛54 = ∛(27 · 2)'
+                            },
+                            {
+                                q: 'Ile to jest ∛27 · ∛2 ?',
+                                say: '∛54 = ∛27 · ∛2 = ? · ∛2',
+                                choices: ['9∛2', '3∛2', '2∛3'], correct: 1,
+                                hint: '∛27 to liczba, która 3 razy pomnożona przez siebie daje 27. To 3!',
+                                wrong: { 0: '9 to 3 · 3. Pierwiastek 3. stopnia z 27 to 3, bo 3 · 3 · 3 = 27.' },
+                                ok: 'Brawo! ∛54 = 3∛2.',
+                                board: '∛54 = 3∛2'
+                            },
+                            {
+                                q: 'Teraz √150. Rozbij 150 na kwadrat · resztę.',
+                                say: 'To pierwiastek 2. stopnia, więc szukamy KWADRATU: 4, 9, 16, 25, 36...',
+                                choices: ['25 · 6', '10 · 15', '5 · 30'], correct: 0,
+                                hint: '25 = 5 · 5 to kwadrat, a 25 · 6 = 150.',
+                                wrong: { 1: '10 ani 15 nie jest kwadratem. Szukamy 4, 9, 16, 25...', 2: '5 ani 30 nie jest kwadratem. Szukamy 4, 9, 16, 25...' },
+                                ok: 'Tak! 150 = 25 · 6.',
+                                board: '√150 = √(25 · 6)'
+                            },
+                            {
+                                q: 'Ile to jest √25 · √6 ?',
+                                say: '√150 = √25 · √6 = ? · √6',
+                                choices: ['25√6', '5√6', '6√5'], correct: 1,
+                                hint: '√25 to 5, bo 5 · 5 = 25.',
+                                wrong: { 0: '√25 to 5, nie 25. Sprawdź: 5 · 5 = 25.' },
+                                ok: 'Świetnie! √150 = 5√6.',
+                                board: '√150 = 5√6'
+                            },
+                            {
+                                q: 'Mamy 3∛2 + 5√6. Czy można to dodać w jeden pierwiastek?',
+                                say: '∛ (3. stopnia) i √ (2. stopnia) to różne gatunki – jak pułapka z Modułu D!',
+                                choices: ['Tak: 8√8', 'Nie – suma zostaje 3∛2 + 5√6', 'Tak: 8∛6'], correct: 1,
+                                hint: 'Dodawać można tylko JEDNAKOWE pierwiastki. Tutaj jest ∛2 i √6, więc zostawiamy sumę.',
+                                ok: 'Mądra decyzja! Suma zostaje w tej postaci.',
+                                board: '∛54 + √150 = 3∛2 + 5√6'
+                            },
+                            {
+                                q: 'Zaznacz odpowiedź z zeszytu: sumę ∛54 + √150 można zapisać w postaci:',
+                                say: 'Wynik masz na tablicy. Znajdź go wśród liter!',
+                                choices: ['A. 3∛2 + 5√6', 'B. 3∛6 + 5√6', 'C. 3∛2 + 10√5', 'D. 5∛4 + 10√5'], correct: 0,
+                                hint: 'Na tablicy wyszło 3∛2 + 5√6.',
+                                ok: 'Zadanie 4 rozwiązane: A!',
+                                board: 'Odpowiedź: A. 3∛2 + 5√6 ✔'
+                            }
+                        ]
+                    }
+                ]
+            }
+        };
+    }
+
+    secretDiagramSVG(type) {
+        if (type !== 'twin-squares') return '';
+        const lbl = 'fill="#FDE68A" font-size="13" font-weight="700" font-family="Outfit, sans-serif"';
+        return `
+            <svg class="secret-diagram" viewBox="0 0 270 155" role="img" aria-label="Dwa kwadraty: duży ABCD o boku 6 i mniejszy EFGH">
+                <rect x="22" y="16" width="120" height="120" rx="4" fill="rgba(167,139,250,0.28)" stroke="#A78BFA" stroke-width="3"/>
+                <rect x="168" y="51" width="85" height="85" rx="4" fill="rgba(52,211,153,0.25)" stroke="#34D399" stroke-width="3"/>
+                <text x="10" y="14" ${lbl}>D</text><text x="146" y="14" ${lbl}>C</text>
+                <text x="10" y="150" ${lbl}>A</text><text x="146" y="150" ${lbl}>B</text>
+                <text x="156" y="49" ${lbl}>H</text><text x="255" y="49" ${lbl}>G</text>
+                <text x="156" y="150" ${lbl}>E</text><text x="255" y="150" ${lbl}>F</text>
+                <text x="82" y="84" text-anchor="middle" fill="#fff" font-size="30" font-weight="800" font-family="Fredoka, Outfit, sans-serif">6</text>
+                <text x="210" y="102" text-anchor="middle" fill="#fff" font-size="30" font-weight="800" font-family="Fredoka, Outfit, sans-serif">?</text>
+            </svg>
+        `;
+    }
+
+    renderSecretModule(container, modId) {
+        const mod = this.secretModules[modId];
+        const st = this.secretState[modId];
+        const mission = mod.missions[st.mission];
+        const step = mission.steps[st.step];
+        st.wrong = 0;
+        st.locked = false;
+
+        const allShort = step.choices.every(c => c.length <= 8);
+        const boardHtml = st.board.length
+            ? st.board.map(line => `<div class="secret-board-line">✔ ${line}</div>`).join('')
+            : `<div class="secret-board-empty">Tu pojawią się Twoje rozwiązane kroki ✨</div>`;
+
+        container.innerHTML = `
+            <div class="mission-hero-banner secret-hero">
+                <div class="mission-top-row">
+                    <span class="mission-tag">🕵️ ${mission.tag} • Krok ${st.step + 1} z ${mission.steps.length}</span>
+                    <div class="micro-progress-pills" id="secret-pills"></div>
+                </div>
+                <h2 class="mission-main-question">${step.q}</h2>
+                <div class="mission-math-target">${step.say}</div>
+                <div class="mission-action-instruction">
+                    👉 <span>Kliknij <strong>jedną</strong> odpowiedź poniżej. Pomyłka nic nie kosztuje!</span>
+                </div>
+            </div>
+
+            <div class="secret-choices ${allShort ? 'short' : ''}" id="secret-choices"></div>
+
+            <div class="secret-feedback" id="secret-feedback" aria-live="polite"></div>
+
+            <button class="secret-hint-btn" id="secret-hint-btn">👁️ Pokaż podpowiedź</button>
+            <div class="secret-hint" id="secret-hint">💡 ${step.hint}</div>
+
+            <div class="secret-book-card">
+                <div class="secret-book-title">📖 ${mission.tag} z zeszytu</div>
+                <div class="secret-book-problem">${mission.problem}</div>
+                ${this.secretDiagramSVG(mission.diagram)}
+            </div>
+
+            <div class="secret-board">
+                <div class="secret-board-title">📜 Twoje rozwiązanie</div>
+                ${boardHtml}
+            </div>
+        `;
+
+        this.renderPills('secret-pills', mission.steps.length, st.step);
+
+        const choicesEl = document.getElementById('secret-choices');
+        step.choices.forEach((text, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'secret-choice-btn';
+            btn.textContent = text;
+            btn.addEventListener('click', (e) => this.handleSecretChoice(modId, idx, btn, e));
+            choicesEl.appendChild(btn);
+        });
+
+        document.getElementById('secret-hint-btn').addEventListener('click', () => {
+            document.getElementById('secret-hint').classList.toggle('open');
+            window.AlchemistAudio.playPop(1.2);
+        });
+    }
+
+    handleSecretChoice(modId, idx, btn, event) {
+        const st = this.secretState[modId];
+        if (st.locked) return;
+        const mission = this.secretModules[modId].missions[st.mission];
+        const step = mission.steps[st.step];
+        const feedback = document.getElementById('secret-feedback');
+
+        if (idx === step.correct) {
+            st.locked = true;
+            window.AlchemistAudio.playTransmute();
+            btn.classList.add('correct');
+            document.querySelectorAll('.secret-choice-btn').forEach(b => { if (b !== btn) b.classList.add('dim'); });
+            const rect = btn.getBoundingClientRect();
+            window.AlchemistParticles.burst(rect.left + rect.width / 2, rect.top + rect.height / 2, '#34D399', 28);
+            this.addEssence(20, event.clientX, event.clientY);
+
+            feedback.className = 'secret-feedback good';
+            feedback.textContent = `🎉 ${step.ok}`;
+            st.board.push(step.board);
+
+            const isLastStep = st.step === mission.steps.length - 1;
+            setTimeout(() => {
+                const stage = document.getElementById('workbench-dynamic-content');
+                if (isLastStep) {
+                    this.finishSecretMission(modId, stage);
+                } else {
+                    st.step++;
+                    this.renderSecretModule(stage, modId);
+                }
+            }, 1500);
+        } else {
+            // Non-punitive: gentle wobble, kind explanation, option fades out
+            window.AlchemistAudio.playWobble();
+            btn.classList.add('dim', 'gentle-wobble');
+            btn.disabled = true;
+            st.wrong++;
+            feedback.className = 'secret-feedback soft';
+            feedback.textContent = '🌱 ' + ((step.wrong && step.wrong[idx]) || 'Prawie! Spróbuj inną odpowiedź. Zerknij na podpowiedź 👁️.');
+            if (st.wrong >= 2) {
+                document.getElementById('secret-hint').classList.add('open');
+            }
+        }
+    }
+
+    finishSecretMission(modId, stage) {
+        const mod = this.secretModules[modId];
+        const st = this.secretState[modId];
+        const mission = mod.missions[st.mission];
+        const isLastMission = st.mission === mod.missions.length - 1;
+
+        window.AlchemistAudio.playGrandFanfare ? window.AlchemistAudio.playMerge() : null;
+        this.addEssence(40);
+        this.advanceSpire();
+        const cx = window.innerWidth / 2;
+        window.AlchemistParticles.burst(cx, window.innerHeight / 2, '#FBBF24', 45);
+        window.AlchemistParticles.shockwave(cx, window.innerHeight / 2);
+
+        stage.innerHTML = `
+            <div class="secret-done-card">
+                <div class="secret-done-trophy">🏆</div>
+                <div class="secret-done-title">${mission.tag} rozwiązane!</div>
+                <div class="secret-done-line">${mission.resultLine}</div>
+                <div class="secret-done-answer">${mission.answerLabel}</div>
+                <div class="secret-board secret-board-final">
+                    ${st.board.map(line => `<div class="secret-board-line">✔ ${line}</div>`).join('')}
+                </div>
+                <button class="btn-action-primary" id="btn-secret-next">
+                    <span>🚀</span> ${isLastMission ? 'ZAKOŃCZ TAJEMNICĘ' : 'DALEJ: NASTĘPNE ZADANIE'}
+                </button>
+            </div>
+        `;
+
+        document.getElementById('btn-secret-next').addEventListener('click', () => {
+            st.board = [];
+            st.step = 0;
+            if (!isLastMission) {
+                st.mission++;
+                this.renderSecretModule(stage, modId);
+                return;
+            }
+            this.progress[modId].completed = true;
+            st.mission = 0;
+            if (modId === 'E') {
+                this.showModuleSuccessModal('Tajemnica I rozwiązana!', 'Poradziłaś sobie z bliźniaczymi kwadratami! Pole, bok i pierwiastek – wszystko już łączysz.', () => this.loadModule('F'));
+            } else if (modId === 'F') {
+                this.showModuleSuccessModal('Tajemnica II rozwiązana!', 'Upraszczasz pierwiastki i dodajesz jednakowe kryształy. Została ostatnia Tajemnica!', () => this.loadModule('G'));
+            } else {
+                this.showGrandFinale();
+            }
+        });
     }
 
     // Grand Finale Screen with Majestic Golden Trophy, Huge Congratulations, and Continuous Fireworks!
